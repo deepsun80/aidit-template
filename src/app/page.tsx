@@ -13,20 +13,23 @@ export default function Home() {
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
 
-    console.log('input:', trimmedInput);
-    // try {
-    //   const res = await fetch('/api/query', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ query: input }),
-    //   });
+    try {
+      const res = await fetch('/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: input }),
+      });
 
-    //   const data = await res.json();
-    //   setResponse(data);
-    // } catch (error) {
-    //   console.error('Error fetching data:', error);
-    // }
+      const data = await res.json();
+
+      console.log('data', data.answer.content);
+      setResponse(data.answer.content);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+
+  console.log('response', response);
 
   return (
     <main className='min-h-screen p-8 bg-gray-100'>
