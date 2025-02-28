@@ -3,22 +3,33 @@
 */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { SimpleDirectoryReader } from '@llamaindex/readers/directory';
-import { Document } from 'llamaindex';
+// import { SimpleDirectoryReader } from '@llamaindex/readers/directory';
+import { Document, LlamaParseReader } from 'llamaindex';
+import path from 'path';
+import fs from 'fs';
 
 const signatureKeywords = ['approved by', 'signed by', 'authorized by'];
 
 export async function loadDocuments(dataDir: string): Promise<Document[]> {
+  // ✅ Read all files inside the /data directory
+  const fileNames = fs.readdirSync(dataDir);
+  const filePaths = fileNames.map((file) => path.join(dataDir, file));
+
   // Load documents normally without extractMetadata
-  const rawDocuments = await new SimpleDirectoryReader().loadData({
-    directoryPath: dataDir,
-    // extractMetadata: (text: any) => {
-    //   const containsSignature = signatureKeywords.some((keyword) =>
-    //     text.toLowerCase().includes(keyword)
-    //   );
-    //   return { containsSignature };
-    // },
-  });
+  // --deprecated (if using SimpleDirectoryReader) --
+  // const rawDocuments = await new SimpleDirectoryReader().loadData(dataDir);
+
+  // Initialize LlamaParseReader (configuring it to return Markdown for structured parsing)
+  const reader = new LlamaParseReader({ resultType: 'markdown' });
+
+  //   const rawDocuments = await reader.loadData(dataDir);
+  // Load documents one by one
+  let rawDocuments: Document[] = [];
+  for (const filePath of filePaths) {
+    console.log(`Processing file: ${filePath}`);
+    const docs = await reader.loadData(filePath);
+    rawDocuments = rawDocuments.concat(docs);
+  }
 
   // Manually apply metadata extraction AFTER loading the documents
   const processedDocuments = rawDocuments.map((doc) => {
@@ -27,7 +38,7 @@ export async function loadDocuments(dataDir: string): Promise<Document[]> {
     );
 
     return new Document({
-      text: doc.text, // Keep original text
+      text: `Filename: ${doc.metadata?.file_name || 'unknown'}\n\n${doc.text}`, // Keep original text
       metadata: {
         file_name: doc.metadata?.file_name || 'unknown',
         containsSignature, // Store extracted metadata

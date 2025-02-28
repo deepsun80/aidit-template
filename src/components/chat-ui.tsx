@@ -21,12 +21,16 @@ export default function ChatUI({
       <div className='flex-1 space-y-8 overflow-y-auto'>
         {/* Response Section */}
         {response && (
-          <div
-            className='p-4 bg-white rounded-2xl shadow-sm overflow-auto'
-            style={{ minHeight: '80vh' }}
-          >
-            <pre className='whitespace-pre-wrap break-words text-sm'>
-              {JSON.stringify(response, null, 2)}
+          <div className='p-6 bg-white rounded-2xl shadow-sm overflow-auto'>
+            {/* Question */}
+            <p className='font-semibold text-gray-900'>{response.question}</p>
+
+            {/* Elegant Divider */}
+            <div className='border-t border-gray-300 my-4'></div>
+
+            {/* Answer */}
+            <pre className='whitespace-pre-wrap break-words text-sm text-gray-700'>
+              {response.answer}
             </pre>
           </div>
         )}

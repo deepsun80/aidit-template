@@ -45,9 +45,12 @@ export async function POST(req: NextRequest) {
 
     // 6. Perform the filtered query
     const response = await queryEngine.query(queryOptions);
-    console.log('Response in route:', response);
+    console.log('Debugging API Response:', response.message?.content);
 
-    return NextResponse.json({ answer: response.message });
+    return NextResponse.json({
+      question: query, // Send back the original question
+      answer: response.message?.content || 'No answer available', // Ensure message exists
+    });
   } catch (error) {
     console.error('Error processing query:', error);
     return NextResponse.json(
