@@ -1,6 +1,5 @@
-/* Handles indexing and retrieval: 
-    Handles index creation and storage management.
-*/
+/* Handles indexing and retrieval */
+
 import {
   VectorStoreIndex,
   storageContextFromDefaults,
