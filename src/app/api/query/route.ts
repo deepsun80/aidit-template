@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const queryOptions = buildQueryOptions(query);
     const response = await queryEngine.query(queryOptions);
 
-    console.log('Debugging API Response:', response.message?.content);
+    console.log('Debugging API Response:', response.sourceNodes);
 
     return NextResponse.json({
       question: query,
