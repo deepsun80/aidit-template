@@ -1,27 +1,25 @@
-/* Builds query context and filters based on metadata: 
-    Handles query filtering logic.
-    Builds query context to include document count.
-*/
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* Query handling engine */
 
 export function buildQueryOptions(query: string) {
-  const signatureKeywords = ['approved by', 'signed by', 'authorized by'];
-  const options: any = { query };
-
-  // If the query includes approval-related terms, filter only documents with signatures
-  if (
-    signatureKeywords.some((keyword) => query.toLowerCase().includes(keyword))
-  ) {
-    options.filters = { containsSignature: true };
-  }
-
-  return options;
+  return { query };
 }
 
-export function buildQueryWithContext(
-  query: string,
-  totalDocs: number,
-  documentNames: string
-) {
-  return `There are ${totalDocs} documents in the system. The available documents are: ${documentNames}.\n\nUser question: ${query}`;
-}
+// export function buildQueryOptions(query: string) {
+//   let modifiedQuery = query; // Start with the original query
+
+//   // Check if the query asks for a document by title
+//   const titleMatch = query.match(/document (?:titled|called) (["']?)(.*?)\1/i);
+//   if (titleMatch) {
+//     const requestedTitle = titleMatch[2]; // Extract the title
+//     options.filters = { title: requestedTitle }; // ✅ Filter by title metadata
+//     modifiedQuery += ` Only return results from a document with the exact title "${requestedTitle}". If no such document exists, respond accordingly.`;
+//   }
+
+//   // Modify query if it contains "approved by"
+//   if (query.toLowerCase().includes('approved by')) {
+//     modifiedQuery +=
+//       ' Look for an explicit signature by the department or individual in the query.';
+//   }
+
+//   return { query: modifiedQuery }; // Pass modified query to the LLM
+// }

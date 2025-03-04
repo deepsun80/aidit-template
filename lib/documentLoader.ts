@@ -1,73 +1,50 @@
-/* Loads and groups documents: 
-    Handles document loading, metadata extraction, and grouping chunks. 
-*/
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* Loads documents from /data directory using LlamaParseReader */
 
-// import { SimpleDirectoryReader } from '@llamaindex/readers/directory';
 import { Document, LlamaParseReader } from 'llamaindex';
 import path from 'path';
 import fs from 'fs';
-
-const signatureKeywords = ['approved by', 'signed by', 'authorized by'];
+import { extractTitle } from './helpers';
 
 export async function loadDocuments(dataDir: string): Promise<Document[]> {
-  // ✅ Read all files inside the /data directory
   const fileNames = fs.readdirSync(dataDir);
   const filePaths = fileNames.map((file) => path.join(dataDir, file));
 
-  // Load documents normally without extractMetadata
-  // --deprecated (if using SimpleDirectoryReader) --
-  // const rawDocuments = await new SimpleDirectoryReader().loadData(dataDir);
+  const reader = new LlamaParseReader();
+  const rawDocuments: Document[] = [];
+  const documentTitles: string[] = []; // Store extracted document titles
 
-  // Initialize LlamaParseReader (configuring it to return Markdown for structured parsing)
-  const reader = new LlamaParseReader({ resultType: 'markdown' });
-
-  //   const rawDocuments = await reader.loadData(dataDir);
-  // Load documents one by one
-  let rawDocuments: Document[] = [];
   for (const filePath of filePaths) {
     console.log(`Processing file: ${filePath}`);
     const docs = await reader.loadData(filePath);
-    rawDocuments = rawDocuments.concat(docs);
+
+    if (docs.length > 0) {
+      // ✅ Extract title from the first document's first page
+      const firstPageText = docs[0].text.split('\n').slice(0, 10); // Get top 10 lines
+      const title = extractTitle(firstPageText) || 'Unknown Title';
+
+      console.log('📄 Extracted Document Title:', title);
+
+      // ✅ Store extracted title
+      documentTitles.push(`- ${title} (${path.basename(filePath)})`);
+
+      // ✅ Combine all chunks into a single document & assign metadata
+      const documentWithMetadata = new Document({
+        text: `Filename: ${path.basename(filePath)}\n\n${docs
+          .map((doc) => doc.text)
+          .join('\n\n')}`, // ✅ Embed filename into text to help retrieval
+        metadata: {
+          file_name: path.basename(filePath),
+          title: title || 'Unknown Title',
+        },
+      });
+
+      rawDocuments.push(documentWithMetadata);
+    }
   }
 
-  // Manually apply metadata extraction AFTER loading the documents
-  const processedDocuments = rawDocuments.map((doc) => {
-    const containsSignature = signatureKeywords.some((keyword) =>
-      doc.text.toLowerCase().includes(keyword)
-    );
+  // ✅ Store the document count WITHOUT indexing it
+  console.log(`📄 Total documents: ${filePaths.length}`);
+  console.log('📄 Available Documents:', documentTitles.join('\n'));
 
-    return new Document({
-      text: `Filename: ${doc.metadata?.file_name || 'unknown'}\n\n${doc.text}`, // Keep original text
-      metadata: {
-        file_name: doc.metadata?.file_name || 'unknown',
-        containsSignature, // Store extracted metadata
-      },
-    });
-  });
-
-  // Group chunks by file name
-  const docGroups: { [key: string]: any[] } = {};
-  processedDocuments.forEach((doc) => {
-    const fileName = doc.metadata?.file_name || 'unknown';
-    if (!docGroups[fileName]) {
-      docGroups[fileName] = [];
-    }
-    docGroups[fileName].push(doc);
-  });
-
-  // Convert grouped chunks into full documents with metadata
-  return Object.entries(docGroups).map(([fileName, chunks]) => {
-    return new Document({
-      text: `Filename: ${fileName}\n\n${chunks
-        .map((chunk) => chunk.text)
-        .join('\n\n')}`,
-      metadata: {
-        file_name: fileName,
-        containsSignature: chunks.some(
-          (chunk) => chunk.metadata?.containsSignature
-        ),
-      },
-    });
-  });
+  return rawDocuments; // ✅ Only return actual documents (no metadata doc)
 }
