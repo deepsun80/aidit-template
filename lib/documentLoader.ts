@@ -8,7 +8,7 @@ export async function loadDocuments(dataDir: string): Promise<Document[]> {
   const fileNames = fs.readdirSync(dataDir);
   const filePaths = fileNames.map((file) => path.join(dataDir, file));
 
-  const reader = new LlamaParseReader();
+  const reader = new LlamaParseReader({ resultType: 'json' });
   let rawDocuments: Document[] = [];
 
   for (const filePath of filePaths) {
