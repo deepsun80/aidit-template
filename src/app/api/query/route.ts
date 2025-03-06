@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
     const index = await createIndex(documents);
 
     // 3. Create query engine
-    const queryEngine = index.asQueryEngine();
-    // const queryEngine = index.asQueryEngine({
-    //   similarityTopK: 20, // Number of similar documents to return
-    // });
+    // const queryEngine = index.asQueryEngine();
+    const queryEngine = index.asQueryEngine({
+      similarityTopK: 10, // Number of similar documents to return
+    });
 
     // 4. Perform the query
     const queryOptions = buildQueryOptions(query);
