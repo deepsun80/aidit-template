@@ -27,11 +27,27 @@ export async function POST(req: NextRequest) {
 
     // 3. Create query engine
     const queryEngine = index.asQueryEngine();
+    // const queryEngine = index.asQueryEngine({
+    //   similarityTopK: 20, // Number of similar documents to return
+    // });
 
     // 4. Perform the query
     const queryOptions = buildQueryOptions(query);
     const response = await queryEngine.query(queryOptions);
 
+    // Detailed logging
+    // console.log(`Final Retrieved Chunks Passed to LLM:`);
+    // response.sourceNodes?.forEach((node, index) => {
+    //   console.log(
+    //     `📘 Retrieved Doc ${index + 1} - File: ${
+    //       node.node.metadata?.file_name
+    //     }, Page: ${node.node.metadata?.page || 'Unknown'}, Chunk Index: ${
+    //       node.node.metadata?.chunk_index || 'Unknown'
+    //     }`
+    //   );
+    // });
+
+    // General logging
     console.log('Debugging API Response:', response.message?.content);
 
     return NextResponse.json({
