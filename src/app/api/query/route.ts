@@ -4,6 +4,11 @@ import { loadDocuments } from '@lib/documentLoader';
 import { buildQueryOptions } from '@lib/queryProcessor';
 import { createIndex } from '@lib/indexManager';
 
+export const config = {
+  runtime: 'edge', // Use Edge functions for better performance
+  maxDuration: 60, // Increase timeout to the max (60s for Hobby plan)
+};
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
