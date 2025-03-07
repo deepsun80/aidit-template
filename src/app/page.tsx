@@ -3,6 +3,11 @@
 import { useState } from 'react';
 import ChatUI from '@/components/chat-ui';
 
+export const config = {
+  runtime: 'edge', // Use Edge functions for better performance
+  maxDuration: 60, // Increase timeout to the max (60s for Hobby plan)
+};
+
 export default function Home() {
   const [input, setInput] = useState('');
   const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
