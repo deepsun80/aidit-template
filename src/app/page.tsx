@@ -8,12 +8,15 @@ export default function Home() {
   const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
     []
   );
+  const [loading, setLoading] = useState(false); // Track loading state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmedInput = input.trim();
-    if (!trimmedInput) return;
+    if (!trimmedInput || loading) return;
+
+    setLoading(true); // Start loading
 
     try {
       const res = await fetch('/api/query', {
@@ -27,7 +30,6 @@ export default function Home() {
       console.log('Debugging Frontend Response:', data);
 
       if (data.answer) {
-        // Prepend the new question-answer pair to the list
         setQaList((prev) => [
           { question: data.question, answer: data.answer },
           ...prev,
@@ -35,10 +37,10 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false); // Stop loading after request completes
     }
   };
-
-  console.log('qaList', qaList);
 
   return (
     <main className='min-h-screen p-8 bg-gray-100'>
@@ -47,6 +49,7 @@ export default function Home() {
         onInputChange={setInput}
         onSubmit={handleSubmit}
         qaList={qaList}
+        loading={loading}
       />
     </main>
   );
