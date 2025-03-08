@@ -28,7 +28,7 @@ export default function ChatUI({
   // Open the last item of qaList on mount or when qaList updates
   useEffect(() => {
     if (qaList.length > 0) {
-      setOpenIndexes([0]);
+      setOpenIndexes([qaList.length - 1]);
     }
   }, [qaList]);
 
