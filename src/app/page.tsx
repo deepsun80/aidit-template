@@ -19,7 +19,7 @@ export default function Home() {
     setLoading(true); // Start loading
 
     try {
-      const res = await fetch('/api/query', {
+      const res = await fetch('/api/query/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: input }),
