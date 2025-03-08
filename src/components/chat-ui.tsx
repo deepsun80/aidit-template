@@ -43,8 +43,8 @@ export default function ChatUI({
       <div className='flex-1 space-y-4 overflow-y-auto'>
         {/* Response Section */}
         {qaList
+          .slice()
           // .reverse()
-          // .slice()
           .map((qa, index) => (
             <div
               key={index}
