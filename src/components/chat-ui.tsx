@@ -35,43 +35,46 @@ export default function ChatUI({
     <div className='max-w-4xl mx-auto flex flex-col min-h-screen text-gray-900 gap-8'>
       <div className='flex-1 space-y-4 overflow-y-auto'>
         {/* Response Section */}
-        {qaList.reverse().map((qa, index) => (
-          <div
-            key={index}
-            className='p-6 bg-white rounded-2xl shadow-sm overflow-hidden'
-          >
-            <div className='flex justify-between items-center'>
-              {/* Question */}
-              <p className='font-semibold text-gray-900'>{qa.question}</p>
-
-              {/* Toggle Button */}
-              <button
-                onClick={() => toggleAccordion(index)}
-                className='text-gray-600 hover:text-gray-900 transition'
-              >
-                {openIndexes.includes(index) ? (
-                  <CaretUpIcon className='w-8 h-8' />
-                ) : (
-                  <CaretDownIcon className='w-8 h-8' />
-                )}
-              </button>
-            </div>
-
-            {/* Animated Answer Section */}
+        {qaList
+          .slice()
+          .reverse()
+          .map((qa, index) => (
             <div
-              className={`transition-all duration-300 ease-in-out ${
-                openIndexes.includes(index)
-                  ? 'max-h-96 opacity-100'
-                  : 'max-h-0 opacity-0 overflow-hidden'
-              }`}
+              key={index}
+              className='p-6 bg-white rounded-2xl shadow-sm overflow-hidden'
             >
-              <div className='border-t border-gray-300 my-4'></div>
-              <pre className='whitespace-pre-wrap break-words text-sm text-gray-700'>
-                {qa.answer}
-              </pre>
+              <div className='flex justify-between items-center'>
+                {/* Question */}
+                <p className='font-semibold text-gray-900'>{qa.question}</p>
+
+                {/* Toggle Button */}
+                <button
+                  onClick={() => toggleAccordion(index)}
+                  className='text-gray-600 hover:text-gray-900 transition'
+                >
+                  {openIndexes.includes(index) ? (
+                    <CaretUpIcon className='w-8 h-8' />
+                  ) : (
+                    <CaretDownIcon className='w-8 h-8' />
+                  )}
+                </button>
+              </div>
+
+              {/* Animated Answer Section */}
+              <div
+                className={`transition-all duration-300 ease-in-out ${
+                  openIndexes.includes(index)
+                    ? 'max-h-96 opacity-100'
+                    : 'max-h-0 opacity-0 overflow-hidden'
+                }`}
+              >
+                <div className='border-t border-gray-300 my-4'></div>
+                <pre className='whitespace-pre-wrap break-words text-sm text-gray-700'>
+                  {qa.answer}
+                </pre>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
 
         {/* Loading Indicator */}
         {loading && (
