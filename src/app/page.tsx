@@ -21,7 +21,7 @@ export default function Home() {
     setError(null); // Reset any previous error
 
     try {
-      const res = await fetch('/api/query/test', {
+      const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: input }),
