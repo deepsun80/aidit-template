@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   PaperPlaneIcon,
   CaretUpIcon,
@@ -24,6 +24,13 @@ export default function ChatUI({
 }: ChatUIProps) {
   // Track which questions are expanded
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+
+  // Open the last item of qaList on mount or when qaList updates
+  useEffect(() => {
+    if (qaList.length > 0) {
+      setOpenIndexes([0]);
+    }
+  }, [qaList]);
 
   const toggleAccordion = (index: number) => {
     setOpenIndexes((prev) =>
