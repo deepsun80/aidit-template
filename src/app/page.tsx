@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatUI from '@/components/chat-ui';
 
 export default function Home() {
@@ -9,6 +9,7 @@ export default function Home() {
     []
   );
   const [loading, setLoading] = useState(false); // Track loading state
+  const [error, setError] = useState<string | null>(null); // Error state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +18,7 @@ export default function Home() {
     if (!trimmedInput || loading) return;
 
     setLoading(true); // Start loading
+    setError(null); // Reset any previous error
 
     try {
       const res = await fetch('/api/query/test', {
@@ -36,11 +38,21 @@ export default function Home() {
         ]);
       }
     } catch (error) {
+      setError('Something went wrong. Please try again later.'); // Set error message
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false); // Stop loading after request completes
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError(null); // Hide error after 3 seconds
+      }, 3000);
+      return () => clearTimeout(timeout); // Cleanup timeout if the component is unmounted
+    }
+  }, [error]);
 
   return (
     <main className='min-h-screen p-8 bg-gray-100'>
@@ -51,6 +63,16 @@ export default function Home() {
         qaList={qaList}
         loading={loading}
       />
+
+      {/* Error Popover */}
+      {error && (
+        <div
+          className='fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg'
+          role='alert'
+        >
+          <p>{error}</p>
+        </div>
+      )}
     </main>
   );
 }
