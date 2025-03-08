@@ -60,7 +60,7 @@ export default function Home() {
         input={input}
         onInputChange={setInput}
         onSubmit={handleSubmit}
-        qaList={qaList}
+        qaList={qaList.reverse()}
         loading={loading}
       />
 

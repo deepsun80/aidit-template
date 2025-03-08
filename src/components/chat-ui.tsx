@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   PaperPlaneIcon,
   CaretUpIcon,
@@ -25,6 +25,13 @@ export default function ChatUI({
   // Track which questions are expanded
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
+  // Open the first item of qaList on mount or when qaList updates
+  useEffect(() => {
+    if (qaList.length > 0) {
+      setOpenIndexes([0]); // Open the first item (index 0)
+    }
+  }, [qaList]);
+
   const toggleAccordion = (index: number) => {
     setOpenIndexes((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
@@ -36,8 +43,8 @@ export default function ChatUI({
       <div className='flex-1 space-y-4 overflow-y-auto'>
         {/* Response Section */}
         {qaList
-          .slice()
-          .reverse()
+          // .reverse()
+          // .slice()
           .map((qa, index) => (
             <div
               key={index}
