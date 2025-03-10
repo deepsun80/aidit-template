@@ -48,7 +48,7 @@ export default function ChatUI({
           .map((qa, index) => (
             <div
               key={index}
-              className='p-6 bg-white rounded-2xl shadow-sm overflow-hidden'
+              className='p-6 bg-white rounded-sm shadow-sm overflow-hidden'
             >
               <div className='flex justify-between items-center'>
                 {/* Question */}
@@ -95,12 +95,12 @@ export default function ChatUI({
       {/* Chat Input Section */}
       <form
         onSubmit={onSubmit}
-        className='flex items-center p-4 gap-4 rounded-2xl bottom-0 bg-white sticky'
+        className='flex items-center p-4 gap-4 rounded-sm bottom-0 bg-white sticky'
         style={{ width: '100%' }}
       >
         <textarea
           disabled={loading}
-          className={`flex-1 p-4 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-600 bg-white ${
+          className={`flex-1 p-4 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-600 bg-white ${
             loading ? 'text-gray-300' : 'text-gray-900'
           }`}
           style={{ height: '10vh' }}

@@ -1,24 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ChatUI from '@/components/chat-ui';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import ChatUI from '@/components/ChatUi';
 
 export default function Home() {
+  const { data: session, status } = useSession();
+
   const [input, setInput] = useState('');
   const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
     []
   );
-  const [loading, setLoading] = useState(false); // Track loading state
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const trimmedInput = input.trim();
     if (!trimmedInput || loading) return;
 
-    setLoading(true); // Start loading
-    setError(null); // Reset any previous error
+    setLoading(true);
+    setError(null);
 
     try {
       const res = await fetch('/api/query', {
@@ -28,7 +30,6 @@ export default function Home() {
       });
 
       const data = await res.json();
-
       console.log('Debugging Frontend Response:', data);
 
       if (data.answer) {
@@ -38,24 +39,56 @@ export default function Home() {
         ]);
       }
     } catch (error) {
-      setError('Something went wrong. Please try again later.'); // Set error message
+      setError('Something went wrong. Please try again later.');
       console.error('Error fetching data:', error);
     } finally {
-      setLoading(false); // Stop loading after request completes
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (error) {
       const timeout = setTimeout(() => {
-        setError(null); // Hide error after 3 seconds
+        setError(null);
       }, 3000);
-      return () => clearTimeout(timeout); // Cleanup timeout if the component is unmounted
+      return () => clearTimeout(timeout);
     }
   }, [error]);
 
+  // **Show loading state if session is still being checked**
+  if (status === 'loading') {
+    return <p className='text-center text-lg font-medium'>Loading...</p>;
+  }
+
+  // **Require authentication**
+  if (!session) {
+    return (
+      <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
+        <p className='text-md mb-4 text-gray-900 '>
+          You must be signed in to access this page.
+        </p>
+        <button
+          onClick={() => signIn('google')}
+          className='px-6 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+        >
+          Sign In with Google
+        </button>
+      </div>
+    );
+  }
+
   return (
     <main className='min-h-screen p-8 bg-gray-100'>
+      {/* Sign Out Button */}
+      <div className='flex justify-end mb-4'>
+        <button
+          onClick={() => signOut()}
+          className='px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+        >
+          Sign Out
+        </button>
+      </div>
+
       <ChatUI
         input={input}
         onInputChange={setInput}
