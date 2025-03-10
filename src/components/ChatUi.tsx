@@ -113,7 +113,7 @@ export default function ChatUI({
           className='p-3 bg-gray-900 text-white rounded-full shadow-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
           disabled={loading}
         >
-          <PaperPlaneIcon className='w-5 h-5' />
+          <PaperPlaneIcon className='w-4 h-4' />
         </button>
       </form>
     </div>

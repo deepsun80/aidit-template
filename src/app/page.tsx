@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import Image from 'next/image';
 import ChatUI from '@/components/ChatUi';
+import { ExitIcon } from '@radix-ui/react-icons';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -69,9 +71,17 @@ export default function Home() {
         </p>
         <button
           onClick={() => signIn('google')}
-          className='px-6 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+          className='flex items-center px-6 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
         >
-          Sign In with Google
+          {/* Google Logo */}
+          <Image
+            src='/google-logo.png' // Or '/google-logo.svg' if using SVG
+            alt='Google Logo'
+            width={20} // Adjust size as needed
+            height={20}
+            className='mr-2' // Adds spacing between icon and text
+          />
+          Sign in with Google
         </button>
       </div>
     );
@@ -83,8 +93,10 @@ export default function Home() {
       <div className='flex justify-end mb-4'>
         <button
           onClick={() => signOut()}
-          className='px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+          className='flex items-center px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
         >
+          {/* Logout Icon */}
+          <ExitIcon className='w-4 h-4 mr-2' />
           Sign Out
         </button>
       </div>
