@@ -37,4 +37,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Extra
 
-tsx lib/deleteVectors.ts - Delete all indexes in Pinecone vector DB
+tsx scripts/indexDocuments.ts - Index all documents and store in Pinecone vector DB.
+tsx scripts/deleteVectors.ts - Delete all indexes in Pinecone vector DB.

@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
-
 import { Pinecone } from '@pinecone-database/pinecone';
+
+dotenv.config({ path: '.env.local' });
 
 const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
 const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME;

@@ -41,7 +41,7 @@ export default function Home() {
         ]);
       }
     } catch (error) {
-      setError('Something went wrong. Please try again later.');
+      setError('Something went wrong: ' + error);
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
-import { loadDocuments } from '@lib/documentLoader';
 import { buildQueryOptions } from '@lib/queryProcessor';
-import { createIndex } from '@lib/indexManager';
+import { getIndex } from '@lib/indexManager';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,14 +16,18 @@ export async function POST(req: NextRequest) {
 
     console.log('Query received:', query);
 
-    // 1. Load documents
-    const dataDir = path.join(process.cwd(), 'data');
-    const documents = await loadDocuments(dataDir);
+    // 1. Create index
+    const { index, error } = await getIndex();
 
-    // 2. Create index
-    const index = await createIndex(documents);
+    if (error || !index) {
+      console.error('Error retrieving index:', error);
+      return NextResponse.json(
+        { error: 'Failed to load index. Please try again later.' },
+        { status: 500 }
+      );
+    }
 
-    // 3. Create query engine
+    // 2. Create query engine
     // const queryEngine = index.asQueryEngine();
     const queryEngine = index.asQueryEngine({
       similarityTopK: 10, // Number of similar documents to return
