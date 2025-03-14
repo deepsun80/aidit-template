@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       similarityTopK: 10, // Number of similar documents to return
     });
 
-    // 4. Perform the query
+    // 3. Perform the query
     const queryOptions = buildQueryOptions(query);
     const response = await queryEngine.query(queryOptions);
 
@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
     // General logging
     console.log('Debugging API Response:', response.message?.content);
 
+    // 4. Return the response
     return NextResponse.json({
       question: query,
       answer: response.message?.content || 'No answer available',
