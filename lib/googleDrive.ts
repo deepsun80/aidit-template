@@ -1,6 +1,14 @@
+/**
+ * Google Drive Integration:
+ *
+ * - Fetches a list of files from a specific Google Drive folder.
+ * - Downloads file content as a Buffer (no writing to disk).
+ */
+
 import * as dotenv from 'dotenv';
 import { google } from 'googleapis';
 import { GoogleAuth } from 'google-auth-library';
+import stream from 'stream';
 
 dotenv.config({ path: '.env.local' });
 
@@ -10,10 +18,6 @@ const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY
   ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
   : '';
 const GOOGLE_DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID!;
-
-// console.log('GOOGLE_CLIENT_EMAIL:', GOOGLE_CLIENT_EMAIL);
-// console.log('GOOGLE_PRIVATE_KEY:', GOOGLE_PRIVATE_KEY ? 'Loaded' : 'Missing');
-// console.log('GOOGLE_DRIVE_FOLDER_ID:', process.env.GOOGLE_DRIVE_FOLDER_ID);
 
 // Initialize Google Drive API client
 const auth = new GoogleAuth({
@@ -39,6 +43,38 @@ export async function fetchGoogleDriveFiles() {
     return response.data.files || [];
   } catch (error) {
     console.error('Error fetching files from Google Drive:', error);
-    return error;
+    return [];
+  }
+}
+
+/** Downloads a file's content as a Buffer (no disk writing) */
+export async function downloadFileContent(
+  fileId: string
+): Promise<Buffer | null> {
+  try {
+    const response = await drive.files.get(
+      { fileId, alt: 'media' },
+      { responseType: 'stream' }
+    );
+
+    const bufferChunks: Buffer[] = [];
+    const bufferStream = new stream.Writable({
+      write(chunk, encoding, callback) {
+        bufferChunks.push(Buffer.from(chunk));
+        callback();
+      },
+    });
+
+    await new Promise((resolve, reject) => {
+      response.data
+        .pipe(bufferStream)
+        .on('finish', resolve)
+        .on('error', reject);
+    });
+
+    return Buffer.concat(bufferChunks);
+  } catch (error) {
+    console.error(`Error downloading file content (ID: ${fileId}):`, error);
+    return null;
   }
 }
