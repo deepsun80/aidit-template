@@ -40,7 +40,10 @@ export async function fetchGoogleDriveFiles() {
       supportsAllDrives: true,
     });
 
-    return response.data.files || [];
+    const files = response.data.files || [];
+    console.log(`Fetched ${files.length} files from Google Drive.`);
+
+    return files;
   } catch (error) {
     console.error('Error fetching files from Google Drive:', error);
     return [];

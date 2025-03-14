@@ -13,6 +13,8 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
+const MAX_FILE_SIZE_MB = 50 * 1024 * 1024; // 50MB limit
+
 export async function loadDocuments(): Promise<Document[]> {
   const files = await fetchGoogleDriveFiles();
   if (!files.length) {
@@ -45,6 +47,12 @@ export async function loadDocuments(): Promise<Document[]> {
       const fileBuffer = await downloadFileContent(file.id);
       if (!fileBuffer) {
         console.warn(`Skipping file ${safeFileName} (empty content)`);
+        continue;
+      }
+
+      // Check if file exceeds size limit
+      if (fileBuffer.length > MAX_FILE_SIZE_MB) {
+        console.warn(`Skipping ${safeFileName}: File is too large.`);
         continue;
       }
 
