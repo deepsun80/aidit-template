@@ -42,3 +42,6 @@ next-env.d.ts
 
 # llamaindex
 /storage
+
+# google cloud
+/google-config.json
