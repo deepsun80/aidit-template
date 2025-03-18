@@ -5,11 +5,15 @@ import { useState } from 'react';
 interface QuestionSelectorProps {
   questions: string[];
   onSelectionChange: (selectedQuestions: string[]) => void;
+  onCancel: () => void;
+  onSubmit: () => void;
 }
 
 export default function QuestionSelector({
   questions,
   onSelectionChange,
+  onCancel,
+  onSubmit,
 }: QuestionSelectorProps) {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -50,7 +54,7 @@ export default function QuestionSelector({
       </div>
 
       {/* Question List */}
-      <div className='max-h-[65vh] overflow-y-auto'>
+      <div className='overflow-y-auto'>
         {questions?.map((question, index) => {
           return (
             <div
@@ -69,6 +73,23 @@ export default function QuestionSelector({
             </div>
           );
         })}
+      </div>
+
+      {/* Sticky Footer with Buttons */}
+      <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.1)] p-4 flex justify-between'>
+        <button
+          onClick={onCancel}
+          className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600'
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onSubmit}
+          className='px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+          disabled={selectedQuestions.length === 0} // Disable if no questions selected
+        >
+          Submit
+        </button>
       </div>
     </div>
   );

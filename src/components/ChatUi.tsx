@@ -61,8 +61,8 @@ export default function ChatUI({
   };
 
   return (
-    <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-8'>
-      <div className='flex-1 space-y-4 overflow-y-auto min-h-[70vh]'>
+    <div className='max-w-4xl mx-auto flex flex-col min-h-screen text-gray-900 gap-8'>
+      <div className='flex-1 space-y-4 overflow-y-auto'>
         {/* Response Section */}
         {qaList
           .slice()
