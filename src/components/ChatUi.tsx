@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   PaperPlaneIcon,
   CaretUpIcon,
   CaretDownIcon,
+  UploadIcon,
 } from '@radix-ui/react-icons';
 
 interface ChatUIProps {
   input: string;
   onInputChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  onFileSelect: (file: File | null) => void;
   qaList: { question: string; answer: string }[];
   loading: boolean;
 }
@@ -19,11 +21,14 @@ export default function ChatUI({
   input,
   onInputChange,
   onSubmit,
+  onFileSelect,
   qaList,
   loading,
 }: ChatUIProps) {
   // Track which questions are expanded
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Open the first item of qaList on mount or when qaList updates
   useEffect(() => {
@@ -38,9 +43,26 @@ export default function ChatUI({
     );
   };
 
+  const handleUploadClick = () => {
+    if (!loading) fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+
+    // Validate that only PDF files are accepted
+    if (file && file.type !== 'application/pdf') {
+      alert('Only PDF files are allowed.');
+      return;
+    }
+
+    // Pass the selected file to the parent component
+    onFileSelect(file);
+  };
+
   return (
-    <div className='max-w-4xl mx-auto flex flex-col min-h-screen text-gray-900 gap-8'>
-      <div className='flex-1 space-y-4 overflow-y-auto'>
+    <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-8'>
+      <div className='flex-1 space-y-4 overflow-y-auto min-h-[70vh]'>
         {/* Response Section */}
         {qaList
           .slice()
@@ -56,8 +78,10 @@ export default function ChatUI({
 
                 {/* Toggle Button */}
                 <button
+                  type='button'
                   onClick={() => toggleAccordion(index)}
                   className='text-gray-600 hover:text-gray-900 transition'
+                  disabled={loading}
                 >
                   {openIndexes.includes(index) ? (
                     <CaretUpIcon className='w-8 h-8' />
@@ -82,20 +106,12 @@ export default function ChatUI({
               </div>
             </div>
           ))}
-
-        {/* Loading Indicator */}
-        {loading && (
-          <div className='flex justify-center items-center mt-4'>
-            <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
-            <span className='ml-2 text-gray-700 text-sm'>Processing...</span>
-          </div>
-        )}
       </div>
 
       {/* Chat Input Section */}
       <form
         onSubmit={onSubmit}
-        className='flex items-center p-4 gap-4 rounded-sm bottom-0 bg-white sticky'
+        className='flex items-center p-4 gap-4 rounded-sm bottom-0 bg-white sticky shadow-[0_-2px_5px_rgba(0,0,0,0.1)]'
         style={{ width: '100%' }}
       >
         <textarea
@@ -108,13 +124,37 @@ export default function ChatUI({
           onChange={(e) => onInputChange(e.target.value)}
           placeholder='Ask something...'
         />
-        <button
-          type='submit'
-          className='p-3 bg-gray-900 text-white rounded-full shadow-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
-          disabled={loading}
-        >
-          <PaperPlaneIcon className='w-4 h-4' />
-        </button>
+
+        {/* Button Container - Stack Buttons Vertically */}
+        <div className='flex flex-col items-center gap-2'>
+          {/* Submit Button */}
+          <button
+            type='submit'
+            className='p-3 bg-gray-800 text-white rounded-full shadow-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
+            disabled={loading}
+          >
+            <PaperPlaneIcon className='w-4 h-4' />
+          </button>
+
+          {/* Upload Button */}
+          <button
+            type='button'
+            onClick={handleUploadClick}
+            className='p-3 bg-gray-800 text-white rounded-full shadow-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
+            disabled={loading}
+          >
+            <UploadIcon className='w-5 h-5' />
+          </button>
+        </div>
+
+        {/* Hidden File Input */}
+        <input
+          type='file'
+          ref={fileInputRef}
+          accept='.pdf'
+          className='hidden'
+          onChange={handleFileChange}
+        />
       </form>
     </div>
   );
