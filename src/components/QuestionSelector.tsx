@@ -76,7 +76,7 @@ export default function QuestionSelector({
       </div>
 
       {/* Sticky Footer with Buttons */}
-      <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.1)] p-4 flex justify-between'>
+      <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white border-t border-gray-200 p-4 flex justify-between'>
         <button
           onClick={onCancel}
           className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600'

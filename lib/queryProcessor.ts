@@ -4,5 +4,7 @@
 */
 
 export function buildQueryOptions(query: string) {
-  return { query };
+  return {
+    query: `${query}. Cite the document and page for the information in response.`,
+  };
 }

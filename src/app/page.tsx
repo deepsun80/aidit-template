@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
-import ChatUI from '@/components/ChatUi';
+import ChatPrompt from '@/components/ChatPrompt';
 import QuestionSelector from '@/components/QuestionSelector';
+import QACards from '@/components/QACards';
 import { ExitIcon } from '@radix-ui/react-icons';
 
 const testQuestions = [
@@ -98,56 +99,68 @@ const testQuestions = [
   'Are corrective and preventive actions reviewed for effectiveness?',
 ];
 
-// const testChatData = [
-//   {
-//     question: 'What is the capital of France?',
-//     answer: 'Paris',
-//   },
-//   {
-//     question: 'Who is the president of the United States?',
-//     answer: 'Joe Biden',
-//   },
-//   {
-//     question: 'What is the largest planet in our solar system?',
-//     answer: 'Jupiter',
-//   },
-//   {
-//     question: 'What is the capital of France?',
-//     answer: 'Paris',
-//   },
-//   {
-//     question: 'Who is the president of the United States?',
-//     answer: 'Joe Biden',
-//   },
-//   {
-//     question: 'What is the largest planet in our solar system?',
-//     answer: 'Jupiter',
-//   },
-//   {
-//     question: 'What is the capital of France?',
-//     answer: 'Paris',
-//   },
-//   {
-//     question: 'Who is the president of the United States?',
-//     answer: 'Joe Biden',
-//   },
-//   {
-//     question: 'What is the largest planet in our solar system?',
-//     answer: 'Jupiter',
-//   },
-//   {
-//     question: 'What is the capital of France?',
-//     answer: 'Paris',
-//   },
-//   {
-//     question: 'Who is the president of the United States?',
-//     answer: 'Joe Biden',
-//   },
-//   {
-//     question: 'What is the largest planet in our solar system?',
-//     answer: 'Jupiter',
-//   },
-// ];
+const testChatData = [
+  {
+    id: 0,
+    question: 'What is the capital of France?',
+    answer: 'Paris',
+  },
+  {
+    id: 1,
+    question: 'Who is the president of the United States?',
+    answer: 'Joe Biden',
+  },
+  {
+    id: 2,
+    question: 'What is the largest planet in our solar system?',
+    answer: 'Jupiter',
+  },
+  {
+    id: 3,
+    question: 'What is the capital of France?',
+    answer: 'Paris',
+  },
+  {
+    id: 4,
+    question: 'Who is the president of the United States?',
+    answer: 'Joe Biden',
+  },
+  {
+    id: 5,
+    question: 'What is the largest planet in our solar system?',
+    answer: 'Jupiter',
+  },
+  {
+    id: 6,
+    question: 'What is the capital of France?',
+    answer: 'Paris',
+  },
+  {
+    id: 7,
+    question: 'Who is the president of the United States?',
+    answer: 'Joe Biden',
+  },
+  {
+    id: 8,
+    question: 'What is the largest planet in our solar system?',
+    answer: 'Jupiter',
+  },
+  {
+    id: 9,
+    question: 'What is the capital of France?',
+    answer: 'Paris',
+  },
+  {
+    id: 10,
+    question: 'Who is the president of the United States?',
+    answer: 'Joe Biden',
+  },
+  {
+    id: 11,
+    question: 'What is the largest planet in our solar system?',
+    answer: 'Jupiter',
+  },
+];
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -347,14 +360,16 @@ export default function Home() {
 
       {/* Show Questions UI when questions are available */}
       {qaList?.length > 0 ? (
-        <ChatUI
-          input={input}
-          onInputChange={setInput}
-          onSubmit={handleSubmitChat}
-          qaList={qaList}
-          loading={loading || uploading}
-          onFileSelect={handleFileSelect}
-        />
+        <>
+          <QACards qaList={qaList} />
+          <ChatPrompt
+            input={input}
+            onInputChange={setInput}
+            onSubmit={handleSubmitChat}
+            onCancel={() => setInput('')}
+            loading={loading || uploading}
+          />
+        </>
       ) : questions && questions.length > 0 ? (
         <QuestionSelector
           questions={questions}
@@ -363,14 +378,16 @@ export default function Home() {
           onSubmit={handleSubmitQuestions}
         />
       ) : (
-        <ChatUI
-          input={input}
-          onInputChange={setInput}
-          onSubmit={handleSubmitChat}
-          qaList={qaList}
-          loading={loading || uploading}
-          onFileSelect={handleFileSelect}
-        />
+        <>
+          <QACards qaList={qaList} />
+          <ChatPrompt
+            input={input}
+            onInputChange={setInput}
+            onSubmit={handleSubmitChat}
+            onCancel={() => setInput('')}
+            loading={loading || uploading}
+          />
+        </>
       )}
 
       {/* Uploaded File Display */}

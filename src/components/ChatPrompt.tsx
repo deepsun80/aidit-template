@@ -1,0 +1,56 @@
+'use client';
+
+interface ChatPromptProps {
+  input: string;
+  onInputChange: (value: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onCancel: () => void;
+  loading: boolean;
+}
+
+export default function ChatPrompt({
+  input,
+  onInputChange,
+  onSubmit,
+  onCancel,
+  loading,
+}: ChatPromptProps) {
+  return (
+    <div className='fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white border border-gray-300 p-4 z-50 max-w-4xl shadow-md'>
+      {/* Text Area */}
+      <textarea
+        disabled={loading}
+        className={`w-full p-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-gray-600 bg-white ${
+          loading ? 'text-gray-300' : 'text-gray-900'
+        }`}
+        style={{ height: '12vh' }}
+        value={input}
+        onChange={(e) => onInputChange(e.target.value)}
+        placeholder='Ask something...'
+      />
+
+      {/* Footer Section */}
+      <div className='flex justify-between items-center pt-4 mt-4'>
+        {/* Cancel Button */}
+        <button
+          type='button'
+          onClick={onCancel}
+          className='px-4 py-2 bg-gray-200 text-gray-800 rounded-sm hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed'
+          disabled={loading}
+        >
+          Cancel
+        </button>
+
+        {/* Submit Button */}
+        <button
+          type='submit'
+          onClick={onSubmit}
+          className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed'
+          disabled={loading}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  );
+}
