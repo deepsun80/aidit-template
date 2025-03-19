@@ -153,9 +153,10 @@ export default function Home() {
   const { data: session, status } = useSession();
 
   const [input, setInput] = useState('');
-  const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
-    []
-  );
+  const [qaList, setQaList] = useState<
+    { id: number; question: string; answer: string }[]
+  >([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -163,19 +164,57 @@ export default function Home() {
   const [questions, setQuestions] = useState<string[] | null>(null);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // **Handle Chat Submission (Single Query)**
+  const handleSubmitChat = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedInput = input.trim();
-    if (!trimmedInput || loading) return;
+    if (!input.trim() || loading) return;
 
     setLoading(true);
     setError(null);
 
+    const nextId =
+      qaList.length > 0 ? Math.max(...qaList.map((qa) => qa.id)) + 1 : 1;
+
+    await processQuery(input, nextId);
+
+    setLoading(false);
+  };
+
+  // **Handle Multiple Question Submission**
+  const handleSubmitQuestions = async () => {
+    if (selectedQuestions.length === 0) return;
+
+    setLoading(true);
+    setError(null);
+
+    for (const question of selectedQuestions) {
+      const questionIndex = questions?.indexOf(question) || 0;
+
+      // Check if this question already exists in qaList
+      const exists = qaList.some((qa) => qa.id === questionIndex);
+      if (exists) {
+        console.log(`Skipping duplicate question: ${question}`);
+        continue; // Skip if already present
+      }
+
+      console.log('Processing query:', question, 'Index:', questionIndex);
+
+      await processQuery(question, questionIndex);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
+    }
+
+    setLoading(false);
+    setQuestions(null); // Hide question selector after processing
+    setSelectedQuestions([]); // Reset selection
+  };
+
+  // **Function to Process a Query**
+  const processQuery = async (query: string, id: number) => {
     try {
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: input }),
+        body: JSON.stringify({ query }),
       });
 
       const data = await res.json();
@@ -183,15 +222,13 @@ export default function Home() {
 
       if (data.answer) {
         setQaList((prev) => [
-          { question: data.question, answer: data.answer },
           ...prev,
+          { id, question: data.question, answer: data.answer },
         ]);
       }
     } catch (error) {
       setError('Something went wrong: ' + error);
       console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -290,7 +327,7 @@ export default function Home() {
     <main className='min-h-screen p-8 bg-gray-100'>
       {/* Loading Overlay */}
       {(loading || uploading) && (
-        <div className='absolute inset-0 bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
+        <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
           <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
           <span className='mt-2 text-gray-700 text-sm'>Processing...</span>
         </div>
@@ -309,18 +346,27 @@ export default function Home() {
       </div>
 
       {/* Show Questions UI when questions are available */}
-      {questions && questions.length > 0 ? (
+      {qaList?.length > 0 ? (
+        <ChatUI
+          input={input}
+          onInputChange={setInput}
+          onSubmit={handleSubmitChat}
+          qaList={qaList}
+          loading={loading || uploading}
+          onFileSelect={handleFileSelect}
+        />
+      ) : questions && questions.length > 0 ? (
         <QuestionSelector
           questions={questions}
           onSelectionChange={setSelectedQuestions}
-          onCancel={() => setQuestions(null)} // Hide QuestionSelector when cancel is clicked
-          onSubmit={() => console.log('Selected Questions:', selectedQuestions)}
+          onCancel={() => setQuestions(null)}
+          onSubmit={handleSubmitQuestions}
         />
       ) : (
         <ChatUI
           input={input}
           onInputChange={setInput}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmitChat}
           qaList={qaList}
           loading={loading || uploading}
           onFileSelect={handleFileSelect}

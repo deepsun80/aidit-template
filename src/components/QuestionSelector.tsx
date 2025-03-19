@@ -40,7 +40,7 @@ export default function QuestionSelector({
   return (
     <div className='bg-white text-gray-900 rounded-sm shadow p-4 max-w-4xl mx-auto mt-4'>
       {/* Header */}
-      <div className='flex justify-between items-center border-b border-gray-300 pb-2 mb-2 pr-6'>
+      <div className='flex justify-between items-center border-b border-gray-300 pb-2 mb-2 pr-2'>
         <p className='font-semibold text-lg'>Questions</p>
         <label className='flex items-center space-x-2 cursor-pointer'>
           <span className='text-gray-700'>Select All</span>
