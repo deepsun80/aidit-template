@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildQueryOptions } from '@lib/queryProcessor';
 import { getIndex } from '@lib/indexManager';
+import { formatError } from '@lib/helpers';
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +23,9 @@ export async function POST(req: NextRequest) {
     if (error || !index) {
       console.error('Error retrieving index:', error);
       return NextResponse.json(
-        { error: 'Failed to load index. Please try again later.' },
+        {
+          error: formatError(error, 'Failed to load index'),
+        },
         { status: 500 }
       );
     }
@@ -58,9 +61,11 @@ export async function POST(req: NextRequest) {
       answer: response.message?.content || 'No answer available',
     });
   } catch (error) {
-    console.error('Error processing query:', error);
+    console.error('Query API Error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: formatError(error, 'Query API Error: Internal Server Error.'),
+      },
       { status: 500 }
     );
   }

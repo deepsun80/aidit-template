@@ -12,6 +12,7 @@ import { fetchGoogleDriveFiles, downloadFileContent } from './googleDrive';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { formatError } from '@lib/helpers';
 
 const MAX_FILE_SIZE_MB = 50 * 1024 * 1024; // 50MB limit
 
@@ -66,7 +67,13 @@ export async function loadDocuments(): Promise<Document[]> {
       // Clean up: Delete temp file after processing
       fs.unlinkSync(tempFilePath);
     } catch (error) {
-      console.error(`Error processing file ${safeFileName}:`, error);
+      console.error(`Document loading failed for ${safeFileName}:`, error);
+      throw new Error(
+        `Document loading failed for ${safeFileName}: ${formatError(
+          error,
+          String(error)
+        )}`
+      );
     }
   }
 

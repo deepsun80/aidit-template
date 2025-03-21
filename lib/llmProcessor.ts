@@ -1,4 +1,5 @@
 import { OpenAI } from 'openai';
+import { formatError } from '@lib/helpers';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -32,6 +33,8 @@ export async function extractAuditQuestions(text: string): Promise<string[]> {
     return questions;
   } catch (error) {
     console.error('Error extracting audit questions:', error);
-    return [];
+    throw new Error(
+      `Failed to extract audit questions: ${formatError(error, String(error))}`
+    );
   }
 }

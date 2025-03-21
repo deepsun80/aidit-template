@@ -9,6 +9,7 @@ import * as dotenv from 'dotenv';
 import { google } from 'googleapis';
 import { GoogleAuth } from 'google-auth-library';
 import stream from 'stream';
+import { formatError } from '@lib/helpers';
 
 dotenv.config({ path: '.env.local' });
 
@@ -46,7 +47,12 @@ export async function fetchGoogleDriveFiles() {
     return files;
   } catch (error) {
     console.error('Error fetching files from Google Drive:', error);
-    return [];
+    throw new Error(
+      `Error fetching files from Google Drive: ${formatError(
+        error,
+        String(error)
+      )}`
+    );
   }
 }
 
@@ -78,6 +84,11 @@ export async function downloadFileContent(
     return Buffer.concat(bufferChunks);
   } catch (error) {
     console.error(`Error downloading file content (ID: ${fileId}):`, error);
-    return null;
+    throw new Error(
+      `Error downloading file content (ID: ${fileId}): ${formatError(
+        error,
+        String(error)
+      )}`
+    );
   }
 }

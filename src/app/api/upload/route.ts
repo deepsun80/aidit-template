@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { LlamaParseReader, Document } from 'llamaindex';
 import { extractAuditQuestions } from '@lib/llmProcessor';
+import { formatError } from '@lib/helpers';
 
 // Define a temporary storage path
 const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp_uploads');
@@ -13,6 +14,9 @@ async function ensureUploadDir() {
     await fs.mkdir(TEMP_UPLOAD_DIR, { recursive: true });
   } catch (error) {
     console.error('Error ensuring upload directory:', error);
+    throw new Error(
+      `Error ensuring upload directory: ${formatError(error, String(error))}`
+    );
   }
 }
 
@@ -28,8 +32,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
-
-    // Validate file type
+    // -- Enable for PDF only --
     if (file.type !== 'application/pdf') {
       return NextResponse.json(
         { error: 'Only PDF files are allowed' },
@@ -83,7 +86,9 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error processing upload:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: formatError(error, 'Error processing upload.'),
+      },
       { status: 500 }
     );
   }

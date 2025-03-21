@@ -3,6 +3,8 @@ import { Roboto } from 'next/font/google';
 import './globals.css';
 import { getServerSession } from 'next-auth';
 import SessionProvider from '@/components/SessionProvider'; // Create this file if it doesn't exist
+import { GlobalErrorProvider } from '@/context/GlobalErrorContext';
+import GlobalError from '@/components/GlobalError';
 
 // Load Roboto font
 const roboto = Roboto({
@@ -26,7 +28,12 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang='en' className={roboto.variable}>
-        <body>{children}</body>
+        <body>
+          <GlobalErrorProvider>
+            {children}
+            <GlobalError />
+          </GlobalErrorProvider>
+        </body>
       </html>
     </SessionProvider>
   );

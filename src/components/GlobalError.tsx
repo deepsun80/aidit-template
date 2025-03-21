@@ -1,29 +1,19 @@
-// components/GlobalError.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { useGlobalError } from '@/context/GlobalErrorContext';
 
-interface GlobalErrorProps {
-  error: string | null;
-  onClear: () => void;
-}
-
-export default function GlobalError({ error, onClear }: GlobalErrorProps) {
-  useEffect(() => {
-    if (error) {
-      const timeout = setTimeout(() => onClear(), 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [error, onClear]);
+export default function GlobalError() {
+  const { error, clearError } = useGlobalError();
 
   if (!error) return null;
 
   return (
     <div
-      className='fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg z-70'
+      className='fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg z-50 cursor-pointer'
       role='alert'
+      onClick={clearError}
     >
-      <p>{error}</p>
+      {error}
     </div>
   );
 }

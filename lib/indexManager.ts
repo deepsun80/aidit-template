@@ -1,6 +1,7 @@
 import { VectorStoreIndex, OpenAIEmbedding, Settings } from 'llamaindex';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { PineconeVectorStore } from '@llamaindex/pinecone';
+import { formatError } from '@lib/helpers';
 
 // Set OpenAI Embedding Model
 Settings.embedModel = new OpenAIEmbedding();
@@ -38,8 +39,8 @@ export async function getIndex() {
     };
   } catch (error) {
     console.error('Error loading index from Pinecone:', error);
-    return {
-      error: 'Failed to load index from Pinecone. Please try again later.',
-    };
+    throw new Error(
+      `Failed to load index from Pinecone: ${formatError(error, String(error))}`
+    );
   }
 }

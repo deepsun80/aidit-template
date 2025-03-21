@@ -15,8 +15,9 @@ import {
   storageContextFromDefaults,
 } from 'llamaindex';
 import { PineconeVectorStore } from '@llamaindex/pinecone';
-// import { fetchGoogleDriveFiles } from '../lib/googleDrive';
-import { loadDocuments } from '../lib/documentLoader';
+// import { fetchGoogleDriveFiles } from '@lib/googleDrive';
+import { loadDocuments } from '@lib/documentLoader';
+import { formatError } from '@lib/helpers';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' }); // Load environment variables
@@ -54,6 +55,9 @@ async function indexDocuments() {
     console.log('Documents successfully indexed in Pinecone.');
   } catch (error) {
     console.error('Error indexing documents:', error);
+    throw new Error(
+      `Error indexing documents: ${formatError(error, String(error))}`
+    );
   }
 }
 

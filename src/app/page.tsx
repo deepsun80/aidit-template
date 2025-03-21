@@ -8,7 +8,7 @@ import ChatPrompt from '@/components/ChatPrompt';
 import QuestionSelector from '@/components/QuestionSelector';
 import QACards from '@/components/QACards';
 import WelcomeScreen from '@/components/WelcomeScreen';
-import GlobalError from '@/components/GlobalError';
+import { useGlobalError } from '@/context/GlobalErrorContext';
 
 // const testQuestions = [
 //   'Does the organization have a Quality manual?',
@@ -167,6 +167,8 @@ import GlobalError from '@/components/GlobalError';
 export default function Home() {
   const { data: session, status } = useSession();
 
+  const { showError } = useGlobalError();
+
   const [input, setInput] = useState('');
   const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
     []
@@ -258,8 +260,9 @@ export default function Home() {
         ]);
       }
     } catch (error) {
-      setError('Something went wrong: ' + error);
-      console.error('Error fetching data:', error);
+      // setError('Something went wrong: ' + error);
+      showError(`Error with query: ${error}`);
+      console.error('Error with query:', error);
     }
   };
 
@@ -295,11 +298,13 @@ export default function Home() {
         setQuestions(data.questions);
         setShowQuestionSelector(true);
       } else {
-        setError(data.error || 'Error processing file');
+        // setError(data.error || 'Error processing file');
+        showError(data.error || 'Error processing file');
       }
     } catch (error) {
       console.error('Error uploading file:', error);
-      setError('Failed to upload file');
+      // setError('Failed to upload file');
+      showError(`Error uploading file: ${error}`);
     } finally {
       setUploading(false);
     }
@@ -409,9 +414,6 @@ export default function Home() {
           />
         )}
       </main>
-
-      {/* Error Handling UI */}
-      <GlobalError error={error} onClear={() => setError(null)} />
     </div>
   );
 }
