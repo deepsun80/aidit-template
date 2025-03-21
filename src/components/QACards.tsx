@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CaretUpIcon, CaretDownIcon } from '@radix-ui/react-icons';
 
 interface QACardsProps {
-  qaList: { id: number; question: string; answer: string }[];
+  qaList: { question: string; answer: string }[];
 }
 
 export default function QACards({ qaList }: QACardsProps) {
@@ -18,9 +18,9 @@ export default function QACards({ qaList }: QACardsProps) {
 
   return (
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-4'>
-      {qaList.map((qa, index) => (
+      {qaList.slice().map((qa, index) => (
         <div
-          key={qa.id}
+          key={index}
           className='p-6 bg-white rounded-sm border border-gray-300 overflow-hidden'
         >
           <div className='flex justify-between items-center'>

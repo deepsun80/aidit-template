@@ -7,6 +7,7 @@ interface QuestionSelectorProps {
   onSelectionChange: (selectedQuestions: string[]) => void;
   onCancel: () => void;
   onSubmit: () => void;
+  selectedFile?: string | null;
 }
 
 export default function QuestionSelector({
@@ -14,6 +15,7 @@ export default function QuestionSelector({
   onSelectionChange,
   onCancel,
   onSubmit,
+  selectedFile,
 }: QuestionSelectorProps) {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -41,7 +43,9 @@ export default function QuestionSelector({
     <div className='bg-white text-gray-900 rounded-sm shadow p-4 max-w-4xl mx-auto mt-4'>
       {/* Header */}
       <div className='flex justify-between items-center border-b border-gray-300 pb-2 mb-2 pr-2'>
-        <p className='font-semibold text-lg'>Questions</p>
+        <p className='text-lg'>
+          <span className='font-semibold'>Questions </span>(from {selectedFile})
+        </p>
         <label className='flex items-center space-x-2 cursor-pointer'>
           <span className='text-gray-700'>Select All</span>
           <input
