@@ -306,6 +306,18 @@ export default function Home() {
     }
   };
 
+  // **Update answer for a given index**
+  const handleEditAnswer = (index: number, newAnswer: string) => {
+    setQaList((prev) =>
+      prev.map((qa, i) => (i === index ? { ...qa, answer: newAnswer } : qa))
+    );
+  };
+
+  // **Delete a Q/A pair from the list**
+  const handleDeleteAnswer = (index: number) => {
+    setQaList((prev) => prev.filter((_, i) => i !== index));
+  };
+
   // useEffect(() => {
   //   if (testQuestions && testQuestions.length > 0) {
   //     setQuestions(testQuestions);
@@ -400,7 +412,11 @@ export default function Home() {
             onSubmit={handleSubmitQuestions}
           />
         ) : qaList?.length > 0 ? (
-          <QACards qaList={qaList} />
+          <QACards
+            qaList={qaList}
+            onEdit={handleEditAnswer}
+            onDelete={handleDeleteAnswer}
+          />
         ) : (
           <WelcomeScreen
             questions={questions}
