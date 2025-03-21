@@ -12,15 +12,17 @@ interface SidebarProps {
   onToggleChat: () => void;
   onToggleQuestions: () => void;
   onUploadClick: () => void;
+  questions?: string[] | null;
 }
 
 export default function Sidebar({
   onToggleChat,
   onToggleQuestions,
   onUploadClick,
+  questions,
 }: SidebarProps) {
   return (
-    <aside className='fixed left-0 top-0 h-full w-72 bg-gray-800 text-white flex flex-col items-center py-6'>
+    <aside className='fixed left-0 top-0 h-full w-72 bg-gray-800 text-white flex flex-col items-center py-10'>
       {/* Logo Placeholder */}
       <div className='mb-20'>
         <div className='w-48 h-20 bg-gray-700 flex items-center justify-center'>
@@ -40,10 +42,18 @@ export default function Sidebar({
 
         <button
           onClick={onToggleQuestions}
-          className='flex items-center gap-2 text-gray-300 hover:text-white transition'
+          disabled={!questions || questions.length === 0}
+          className={`flex items-center gap-2 ${
+            questions && questions.length > 0
+              ? 'text-white'
+              : 'text-gray-500 cursor-not-allowed'
+          } transition`}
         >
           <FileIcon className='w-6 h-6' />
           <span className='text-md'>View Uploaded Questions</span>
+          {questions && questions.length > 0 && (
+            <span className='w-2 h-2 bg-red-500 rounded-full ml-2'></span>
+          )}
         </button>
 
         <button

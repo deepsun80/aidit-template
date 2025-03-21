@@ -178,6 +178,9 @@ export default function Home() {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [showChat, setShowChat] = useState(false);
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
+  const [submissionProgress, setSubmissionProgress] = useState<number | null>(
+    null
+  );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -199,6 +202,7 @@ export default function Home() {
 
     await processQuery(input);
 
+    setShowQuestionSelector(false);
     setLoading(false);
   };
 
@@ -208,8 +212,10 @@ export default function Home() {
 
     setLoading(true);
     setError(null);
+    setSubmissionProgress(0);
 
-    for (const question of selectedQuestions) {
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const question = selectedQuestions[i];
       // Check if this question already exists in qaList
       const exists = qaList.some((qa) => qa.question === question);
       if (exists) {
@@ -220,8 +226,11 @@ export default function Home() {
       console.log('Processing query:', question);
 
       await processQuery(question);
+      setSubmissionProgress(i + 1);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
     }
+
+    setSubmissionProgress(null);
 
     setShowQuestionSelector(false);
     setLoading(false);
@@ -351,13 +360,19 @@ export default function Home() {
         onToggleChat={() => setShowChat((prev) => !prev)}
         onToggleQuestions={() => setShowQuestionSelector((prev) => !prev)}
         onUploadClick={() => fileInputRef.current?.click()}
+        questions={questions}
       />
 
       {/* Loading Overlay */}
       {(loading || uploading) && (
         <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
           <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
-          <span className='mt-2 text-gray-700 text-sm'>Processing...</span>
+          <span className='mt-2 text-gray-700 text-sm'>
+            Processing{' '}
+            {submissionProgress !== null &&
+              `${submissionProgress} / ${selectedQuestions.length}`}
+            ...
+          </span>
         </div>
       )}
 
@@ -393,39 +408,85 @@ export default function Home() {
           <QACards qaList={qaList} />
         ) : (
           <>
-            <p className='text-2xl font-bold text-center text-gray-800 mb-4'>
-              Welcome to Ai.Dit
+            <p className='text-4xl text-center text-gray-900 mb-12 mt-4'>
+              Welcome to <span className='font-bold'>Ai.Dit</span>
             </p>
-            {
-              <p className='text-md text-center text-gray-700'>
-                You currently do not have any questions added to your libarary.
-                <br />
-                {questions
-                  ? 'Select Uploaded Questions, select the questions you would like to add to your library, and submit.'
-                  : 'Start by opening chat and asking a question or upload a questionnaire.'}
-              </p>
-            }
+
+            <div className='text-center text-gray-700 text-lg space-y-6'>
+              {/* If no Stored Responses exist */}
+              {qaList.length === 0 && (
+                <>
+                  <p>
+                    You currently do not have any{' '}
+                    <strong>Stored Responses</strong>.
+                  </p>
+
+                  {questions && questions.length > 0 ? (
+                    // If questions are uploaded but not yet submitted
+                    <>
+                      <p>
+                        Select{' '}
+                        <span className='text-gray-800 font-semibold'>
+                          View Uploaded Questions
+                        </span>
+                        , choose which questions you&apos;d like to add to your{' '}
+                        <strong>Stored Responses</strong>, and hit{' '}
+                        <span className='text-gray-800 font-semibold'>
+                          Submit
+                        </span>
+                        .
+                      </p>
+
+                      {/* View Uploaded Questions Button */}
+                      <div className='flex justify-center mt-4'>
+                        <button
+                          onClick={() => setShowQuestionSelector(true)}
+                          className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
+                        >
+                          View Uploaded Questions
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    // Default instructions if no questions exist yet
+                    <>
+                      <p>
+                        <span className='text-gray-900 font-medium'>
+                          Get started by:
+                        </span>
+                      </p>
+                      <div className='flex justify-center gap-4'>
+                        <button
+                          onClick={() => setShowChat(true)}
+                          className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
+                        >
+                          Ask a Question
+                        </button>
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
+                        >
+                          Upload a Questionnaire
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </>
         )}
-
-        {/* Uploaded File Display */}
-        {/* {selectedFile && (
-          <div className='mt-4 p-2 bg-gray-200 text-gray-700 rounded-md text-sm'>
-            <p>Uploaded File: {selectedFile.name}</p>
-            {uploading && <p>Uploading...</p>}
-          </div>
-        )} */}
-
-        {/* Error Popover */}
-        {error && (
-          <div
-            className='fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg'
-            role='alert'
-          >
-            <p>{error}</p>
-          </div>
-        )}
       </main>
+
+      {/* Error Popover */}
+      {error && (
+        <div
+          className='fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg z-70'
+          role='alert'
+        >
+          <p>{error}</p>
+        </div>
+      )}
     </div>
   );
 }

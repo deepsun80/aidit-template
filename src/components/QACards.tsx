@@ -17,7 +17,8 @@ export default function QACards({ qaList }: QACardsProps) {
   };
 
   return (
-    <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-4'>
+    <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
+      <p className='text-lg font-semibold'>Selected Responses</p>
       {qaList.slice().map((qa, index) => (
         <div
           key={index}

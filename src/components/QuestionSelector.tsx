@@ -40,11 +40,14 @@ export default function QuestionSelector({
   };
 
   return (
-    <div className='bg-white text-gray-900 rounded-sm shadow p-4 max-w-4xl mx-auto mt-4'>
+    <div className='bg-white text-gray-900 rounded-sm shadow p-4 max-w-4xl mx-auto mt-2'>
       {/* Header */}
       <div className='flex justify-between items-center border-b border-gray-300 pb-2 mb-2 pr-2'>
-        <p className='text-lg'>
-          <span className='font-semibold'>Questions </span>(from {selectedFile})
+        <p className='text-md text-gray-700'>
+          <span className='font-semibold text-gray-900 text-lg'>
+            Questions{' '}
+          </span>
+          (from {selectedFile})
         </p>
         <label className='flex items-center space-x-2 cursor-pointer'>
           <span className='text-gray-700'>Select All</span>
