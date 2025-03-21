@@ -7,6 +7,8 @@ import Sidebar from '@/components/SideBar';
 import ChatPrompt from '@/components/ChatPrompt';
 import QuestionSelector from '@/components/QuestionSelector';
 import QACards from '@/components/QACards';
+import WelcomeScreen from '@/components/WelcomeScreen';
+import GlobalError from '@/components/GlobalError';
 
 // const testQuestions = [
 //   'Does the organization have a Quality manual?',
@@ -204,6 +206,7 @@ export default function Home() {
 
     setShowQuestionSelector(false);
     setLoading(false);
+    setShowChat(false);
   };
 
   // **Handle Multiple Question Submission**
@@ -302,15 +305,6 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      const timeout = setTimeout(() => {
-        setError(null);
-      }, 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [error]);
-
   // useEffect(() => {
   //   if (testQuestions && testQuestions.length > 0) {
   //     setQuestions(testQuestions);
@@ -407,86 +401,17 @@ export default function Home() {
         ) : qaList?.length > 0 ? (
           <QACards qaList={qaList} />
         ) : (
-          <>
-            <p className='text-4xl text-center text-gray-900 mb-12 mt-4'>
-              Welcome to <span className='font-bold'>Ai.Dit</span>
-            </p>
-
-            <div className='text-center text-gray-700 text-lg space-y-6'>
-              {/* If no Stored Responses exist */}
-              {qaList.length === 0 && (
-                <>
-                  <p>
-                    You currently do not have any{' '}
-                    <strong>Stored Responses</strong>.
-                  </p>
-
-                  {questions && questions.length > 0 ? (
-                    // If questions are uploaded but not yet submitted
-                    <>
-                      <p>
-                        Select{' '}
-                        <span className='text-gray-800 font-semibold'>
-                          View Uploaded Questions
-                        </span>
-                        , choose which questions you&apos;d like to add to your{' '}
-                        <strong>Stored Responses</strong>, and hit{' '}
-                        <span className='text-gray-800 font-semibold'>
-                          Submit
-                        </span>
-                        .
-                      </p>
-
-                      {/* View Uploaded Questions Button */}
-                      <div className='flex justify-center mt-4'>
-                        <button
-                          onClick={() => setShowQuestionSelector(true)}
-                          className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
-                        >
-                          View Uploaded Questions
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    // Default instructions if no questions exist yet
-                    <>
-                      <p>
-                        <span className='text-gray-900 font-medium'>
-                          Get started by:
-                        </span>
-                      </p>
-                      <div className='flex justify-center gap-4'>
-                        <button
-                          onClick={() => setShowChat(true)}
-                          className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
-                        >
-                          Ask a Question
-                        </button>
-                        <button
-                          onClick={() => fileInputRef.current?.click()}
-                          className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
-                        >
-                          Upload a Questionnaire
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          </>
+          <WelcomeScreen
+            questions={questions}
+            onOpenChat={() => setShowChat(true)}
+            onUploadClick={() => fileInputRef.current?.click()}
+            onViewQuestions={() => setShowQuestionSelector(true)}
+          />
         )}
       </main>
 
-      {/* Error Popover */}
-      {error && (
-        <div
-          className='fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow-lg z-70'
-          role='alert'
-        >
-          <p>{error}</p>
-        </div>
-      )}
+      {/* Error Handling UI */}
+      <GlobalError error={error} onClear={() => setError(null)} />
     </div>
   );
 }

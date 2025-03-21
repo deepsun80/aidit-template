@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CaretUpIcon, CaretDownIcon } from '@radix-ui/react-icons';
 
 interface QACardsProps {
@@ -9,12 +9,27 @@ interface QACardsProps {
 
 export default function QACards({ qaList }: QACardsProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const toggleAccordion = (index: number) => {
     setOpenIndexes((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
   };
+
+  // Open the first item of qaList on mount or when qaList updates
+  useEffect(() => {
+    if (qaList.length > 0) {
+      setOpenIndexes([qaList.length - 1]);
+    }
+  }, [qaList]);
+
+  // Scroll to the bottom when qaList updates
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [qaList]);
 
   return (
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
@@ -57,6 +72,9 @@ export default function QACards({ qaList }: QACardsProps) {
           </div>
         </div>
       ))}
+
+      {/* Invisible div to scroll into view */}
+      <div ref={bottomRef} />
     </div>
   );
 }
