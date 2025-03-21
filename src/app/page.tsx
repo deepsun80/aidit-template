@@ -175,7 +175,6 @@ export default function Home() {
   );
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [questions, setQuestions] = useState<string[] | null>(null);
@@ -194,7 +193,6 @@ export default function Home() {
     if (!input.trim() || loading) return;
 
     setLoading(true);
-    setError(null);
 
     // Check if the question already exists in qaList
     const exists = qaList.some((qa) => qa.question === input);
@@ -216,7 +214,6 @@ export default function Home() {
     if (selectedQuestions.length === 0) return;
 
     setLoading(true);
-    setError(null);
     setSubmissionProgress(0);
 
     for (let i = 0; i < selectedQuestions.length; i++) {
@@ -282,7 +279,6 @@ export default function Home() {
   // **Upload File to Backend**
   const uploadFile = async (file: File) => {
     setUploading(true);
-    setError(null);
 
     const formData = new FormData();
     formData.append('file', file);
