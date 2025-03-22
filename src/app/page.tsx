@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
 import Sidebar from '@/components/SideBar';
