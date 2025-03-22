@@ -92,7 +92,7 @@ export default function QuestionSelector({
         </button>
         <button
           onClick={onSubmit}
-          className='px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+          className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
           disabled={selectedQuestions.length === 0} // Disable if no questions selected
         >
           Submit

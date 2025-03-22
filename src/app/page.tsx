@@ -344,7 +344,7 @@ export default function Home() {
         </p>
         <button
           onClick={() => signIn('google')}
-          className='flex items-center px-6 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700'
+          className='flex items-center px-6 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
         >
           {/* Google Logo */}
           <Image
