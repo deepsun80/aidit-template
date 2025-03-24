@@ -1,4 +1,4 @@
-import { VectorStoreIndex, OpenAIEmbedding, Settings } from 'llamaindex';
+import { VectorStoreIndex, Settings, OpenAIEmbedding } from 'llamaindex';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { PineconeVectorStore } from '@llamaindex/pinecone';
 import { formatError } from '@lib/helpers';

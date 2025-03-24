@@ -8,9 +8,9 @@
  */
 
 import {
+  OpenAIEmbedding,
   VectorStoreIndex,
   Document,
-  OpenAIEmbedding,
   Settings,
   storageContextFromDefaults,
 } from 'llamaindex';
