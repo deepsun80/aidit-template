@@ -1,30 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Document } from 'llamaindex';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { LlamaParseReader, Document } from 'llamaindex';
 import { extractAuditQuestions } from '@lib/llmProcessor';
 import { formatError } from '@lib/helpers';
+import { PDFReader } from '@llamaindex/readers/pdf';
 
-// Define a temporary storage path
-const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp_uploads');
-
-// Ensure the directory exists
-async function ensureUploadDir() {
-  try {
-    await fs.mkdir(TEMP_UPLOAD_DIR, { recursive: true });
-  } catch (error) {
-    console.error('Error ensuring upload directory:', error);
-    throw new Error(
-      `Error ensuring upload directory: ${formatError(error, String(error))}`
-    );
-  }
-}
+// Define a temp directory compatible with Vercel
+const TEMP_UPLOAD_DIR = '/tmp';
 
 export async function POST(req: NextRequest) {
   try {
-    // Ensure the upload directory exists
-    await ensureUploadDir();
-
     // Get form data
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
@@ -42,18 +28,19 @@ export async function POST(req: NextRequest) {
 
     console.log('Received file:', file.name);
 
-    // Read the file as a buffer
+    // Read uploaded file as buffer
     const fileBytes = await file.arrayBuffer();
     const fileBuffer = Buffer.from(fileBytes);
 
-    // Save the uploaded file temporarily
-    const filePath = path.join(TEMP_UPLOAD_DIR, file.name);
+    // Save to /tmp directory
+    const safeFileName = file.name.replace(/\s+/g, '_'); // optional: sanitize filename
+    const filePath = path.join(TEMP_UPLOAD_DIR, safeFileName);
     await fs.writeFile(filePath, fileBuffer);
 
     console.log('File saved at:', filePath);
 
-    // Parse document using LlamaParseReader
-    const reader = new LlamaParseReader();
+    // Parse document using PDFReader
+    const reader = new PDFReader();
     const docs: Document[] = await reader.loadData(filePath);
 
     // console.log('docs:', docs);
