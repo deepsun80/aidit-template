@@ -4,6 +4,7 @@ import './globals.css';
 import { getServerSession } from 'next-auth';
 import SessionProvider from '@/components/SessionProvider'; // Create this file if it doesn't exist
 import { GlobalErrorProvider } from '@/context/GlobalErrorContext';
+import { QAProvider } from '@/context/QAContext';
 import GlobalError from '@/components/GlobalError';
 
 // Load Roboto font
@@ -30,8 +31,10 @@ export default async function RootLayout({
       <html lang='en' className={roboto.variable}>
         <body>
           <GlobalErrorProvider>
-            {children}
-            <GlobalError />
+            <QAProvider>
+              {children}
+              <GlobalError />
+            </QAProvider>
           </GlobalErrorProvider>
         </body>
       </html>

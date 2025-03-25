@@ -9,22 +9,26 @@ import QuestionSelector from '@/components/QuestionSelector';
 import QACards from '@/components/QACards';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import { useGlobalError } from '@/context/GlobalErrorContext';
+import { useQA } from '@/context/QAContext';
 
 export default function Home() {
   const { data: session, status } = useSession();
 
   const { showError } = useGlobalError();
 
+  const { qaList, setQaList, questions, setQuestions } = useQA();
+  const { selectedQuestions, setSelectedQuestions } = useQA();
+
   const [input, setInput] = useState('');
-  const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
-    []
-  );
+  // const [qaList, setQaList] = useState<{ question: string; answer: string }[]>(
+  //   []
+  // );
 
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [questions, setQuestions] = useState<string[] | null>(null);
-  const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+  // const [questions, setQuestions] = useState<string[] | null>(null);
+  // const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [showChat, setShowChat] = useState(false);
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useState<number | null>(
