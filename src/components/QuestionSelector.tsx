@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons';
 
 interface QuestionSelectorProps {
   questions: string[];
@@ -8,17 +9,20 @@ interface QuestionSelectorProps {
   onCancel: () => void;
   onSubmit: () => void;
   selectedFile?: string | null;
+  setQuestions: (questions: string[]) => void;
 }
 
 export default function QuestionSelector({
   questions,
+  setQuestions,
   onSelectionChange,
   onCancel,
   onSubmit,
   selectedFile,
 }: QuestionSelectorProps) {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editText, setEditText] = useState<string>('');
 
   // Toggle selection for individual question
   const toggleQuestionSelection = (question: string) => {
@@ -32,9 +36,41 @@ export default function QuestionSelector({
 
   // Handle "Select All" toggle
   const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
+    const newSelectAll = selectedQuestions.length !== questions.length;
     const updatedSelection = newSelectAll ? [...questions] : [];
+    setSelectedQuestions(updatedSelection);
+    onSelectionChange(updatedSelection);
+  };
+
+  // Handle editing a question
+  const handleEditSubmit = () => {
+    if (editIndex === null || editText.trim() === '') return;
+    const updatedQuestions = [...questions];
+    updatedQuestions[editIndex] = editText.trim();
+    setQuestions(updatedQuestions);
+
+    // If the question was selected, update the selectedQuestions as well
+    if (selectedQuestions.includes(questions[editIndex])) {
+      const updatedSelection = selectedQuestions.map((q) =>
+        q === questions[editIndex] ? editText.trim() : q
+      );
+      setSelectedQuestions(updatedSelection);
+      onSelectionChange(updatedSelection);
+    }
+
+    setEditIndex(null);
+    setEditText('');
+  };
+
+  // Handle deleting a question
+  const handleDelete = (index: number) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions.splice(index, 1);
+    setQuestions(updatedQuestions);
+
+    const updatedSelection = selectedQuestions.filter(
+      (q) => q !== questions[index]
+    );
     setSelectedQuestions(updatedSelection);
     onSelectionChange(updatedSelection);
   };
@@ -53,7 +89,7 @@ export default function QuestionSelector({
           <span className='text-gray-700'>Select All</span>
           <input
             type='checkbox'
-            checked={selectAll}
+            checked={selectedQuestions.length === questions.length}
             onChange={handleSelectAll}
             className='w-5 h-5 accent-gray-800'
           />
@@ -62,15 +98,66 @@ export default function QuestionSelector({
 
       {/* Question List */}
       <div className='overflow-y-auto'>
-        {questions?.map((question, index) => {
-          return (
-            <div
-              key={index}
-              className='flex justify-between items-center py-2 pr-2 border-b border-gray-200 last:border-b-0'
-            >
-              <p className='text-sm text-gray-800'>
-                {index + 1}. {question}
-              </p>
+        {questions.map((question, index) => (
+          <div
+            key={index}
+            className='flex justify-between items-center py-2 pr-2 border-b border-gray-200 last:border-b-0 gap-2'
+          >
+            {/* Question text or editable textarea */}
+            <div className='flex-1'>
+              {editIndex === index ? (
+                <textarea
+                  className='w-full p-2 border border-gray-300 rounded-sm text-sm text-gray-800'
+                  rows={2}
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+              ) : (
+                <p className='text-sm text-gray-800'>
+                  {index + 1}. {question}
+                </p>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className='flex items-center gap-2'>
+              {editIndex === index ? (
+                <>
+                  <button
+                    className='px-2 py-1 text-sm bg-gray-200 text-gray-800 rounded-sm hover:bg-gray-300'
+                    onClick={() => {
+                      setEditIndex(null);
+                      setEditText('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className='px-2 py-1 text-sm bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+                    onClick={handleEditSubmit}
+                  >
+                    Submit
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      setEditIndex(index);
+                      setEditText(question);
+                    }}
+                    className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+                  >
+                    <Pencil1Icon className='w-4 h-4 text-white' />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(index)}
+                    className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+                  >
+                    <TrashIcon className='w-4 h-4 text-white' />
+                  </button>
+                </>
+              )}
               <input
                 type='checkbox'
                 checked={selectedQuestions.includes(question)}
@@ -78,8 +165,8 @@ export default function QuestionSelector({
                 className='w-5 h-5 accent-gray-800'
               />
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {/* Sticky Footer with Buttons */}
@@ -93,7 +180,7 @@ export default function QuestionSelector({
         <button
           onClick={onSubmit}
           className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
-          disabled={selectedQuestions.length === 0} // Disable if no questions selected
+          disabled={selectedQuestions.length === 0}
         >
           Submit
         </button>
