@@ -32,7 +32,7 @@ export default function WelcomeScreen({
               View Uploaded Questions
             </span>
             , choose which questions you&apos;d like to add to your{' '}
-            <strong>Stored Responses</strong>, and hit{' '}
+            <strong>Audit Stored Responses</strong>, and hit{' '}
             <span className='text-gray-800 font-semibold'>Submit</span>.
           </p>
           <div className='flex justify-center mt-4'>

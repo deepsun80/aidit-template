@@ -46,7 +46,7 @@ export default function QACards({ qaList, onEdit, onDelete }: QACardsProps) {
 
   return (
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
-      <p className='text-lg font-semibold'>Stored Responses</p>
+      <p className='text-lg font-semibold'>Audit Report 1 Stored Responses</p>
       {qaList.map((qa, index) => (
         <div
           key={index}
