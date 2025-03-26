@@ -84,13 +84,11 @@ export default function QuestionSelector({
     <div className='bg-white text-gray-900 rounded-sm shadow p-4 max-w-4xl mx-auto mt-2'>
       {/* Sticky Header */}
       <div className='sticky top-0 bg-white border-b border-gray-300 pb-2 mb-2 pr-2 z-10 flex justify-between items-center'>
-        <div className='flex gap-4'>
-          <p className='text-md text-gray-700'>
-            <span className='font-semibold text-gray-900 text-lg'>
-              Questions
-            </span>{' '}
-            (from {selectedFile})
-          </p>
+        <div className='flex gap-4 items-center'>
+          <div className='text-md text-gray-700'>
+            <p className='font-semibold text-gray-900 text-lg'>Questions</p>{' '}
+            <p className='text-gray-700 text-sm'>from {selectedFile}</p>
+          </div>
           {/* Trash Icon with Popover */}
           <div className='relative'>
             <button

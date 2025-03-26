@@ -36,8 +36,8 @@ export default function Sidebar({
           height={90}
         /> */}
         <Image
-          src='/Aidit-logo3b.png'
-          alt='Aidit Logo'
+          src='/AiDit-logo3b.png'
+          alt='AiDit Logo'
           width={240} // Adjust size as needed
           height={80}
         />
