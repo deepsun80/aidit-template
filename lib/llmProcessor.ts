@@ -10,10 +10,16 @@ export async function extractAuditQuestions(text: string): Promise<string[]> {
   const prompt = `You are an assistant that extracts audit-related questions from provided documents.
 
 Instructions:
-- Only extract actual audit-related questions from the input text.
+- Extract **all complete audit-related questions** from the input text.
+- If a block of text contains **multiple full questions**, extract each of them as separate items.
+- Do NOT extract broken phrases or incomplete fragments like "Procedure?" or "Policy?" or "Procedure available?" or "Policy available?" unless they are part of a full question.
 - Do NOT include statements or metadata.
-- Return the output as a JSON array of strings. For example:
-["Question 1", "Question 2", "Question 3"]
+- Return the output as a **JSON array of strings**. Example:
+  ["Is there a certain document available?",
+   "Is there a certain procedure in place?", 
+   "Is there evidence of a process?",
+   "Are certain procedures and processes established?"
+  ]
 
 Here is the document text:
 ${text}`;
