@@ -10,6 +10,7 @@ type QAItem = {
 type QAContextType = {
   questions: string[] | null;
   setQuestions: React.Dispatch<React.SetStateAction<string[] | null>>;
+  deleteQuestions: () => void;
   qaList: QAItem[];
   setQaList: React.Dispatch<React.SetStateAction<QAItem[]>>;
   selectedQuestions: string[];
@@ -48,6 +49,12 @@ export const QAProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  // Delete questions
+  const deleteQuestions = () => {
+    setQuestionsState([]);
+    setSelectedQuestionsState([]);
+  };
+
   // Persist to localStorage when values change
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
@@ -73,6 +80,7 @@ export const QAProvider = ({ children }: { children: React.ReactNode }) => {
         setQaList: setQaListState,
         selectedQuestions,
         setSelectedQuestions: setSelectedQuestionsState,
+        deleteQuestions,
       }}
     >
       {children}

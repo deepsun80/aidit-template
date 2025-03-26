@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons';
+import { useQA } from '@/context/QAContext';
 
 interface QuestionSelectorProps {
   questions: string[];
@@ -23,6 +24,10 @@ export default function QuestionSelector({
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
+  const [showConfirmDeleteAll, setShowConfirmDeleteAll] =
+    useState<boolean>(false);
+
+  const { deleteQuestions } = useQA();
 
   // Toggle selection for individual question
   const toggleQuestionSelection = (question: string) => {
@@ -77,23 +82,64 @@ export default function QuestionSelector({
 
   return (
     <div className='bg-white text-gray-900 rounded-sm shadow p-4 max-w-4xl mx-auto mt-2'>
-      {/* Header */}
-      <div className='flex justify-between items-center border-b border-gray-300 pb-2 mb-2 pr-2'>
-        <p className='text-md text-gray-700'>
-          <span className='font-semibold text-gray-900 text-lg'>
-            Questions{' '}
-          </span>
-          (from {selectedFile})
-        </p>
-        <label className='flex items-center space-x-2 cursor-pointer'>
-          <span className='text-gray-700'>Select All</span>
-          <input
-            type='checkbox'
-            checked={selectedQuestions.length === questions.length}
-            onChange={handleSelectAll}
-            className='w-5 h-5 accent-gray-800'
-          />
-        </label>
+      {/* Sticky Header */}
+      <div className='sticky top-0 bg-white border-b border-gray-300 pb-2 mb-2 pr-2 z-10 flex justify-between items-center'>
+        <div className='flex gap-4'>
+          <p className='text-md text-gray-700'>
+            <span className='font-semibold text-gray-900 text-lg'>
+              Questions
+            </span>{' '}
+            (from {selectedFile})
+          </p>
+          {/* Trash Icon with Popover */}
+          <div className='relative'>
+            <button
+              onClick={() => setShowConfirmDeleteAll((prev) => !prev)}
+              className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            >
+              <TrashIcon className='w-4 h-4 text-white' />
+            </button>
+
+            {showConfirmDeleteAll && (
+              <div className='absolute top-10 right-0 bg-white border border-gray-300 shadow-md rounded-sm p-3 z-10'>
+                <p className='text-sm mb-2 text-gray-800'>
+                  Delete all uploaded questions?
+                </p>
+                <div className='flex gap-2'>
+                  <button
+                    className='px-2 py-1 text-sm bg-gray-200 text-gray-800 rounded-sm hover:bg-gray-300'
+                    onClick={() => setShowConfirmDeleteAll(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className='px-2 py-1 text-sm bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+                    onClick={() => {
+                      deleteQuestions();
+                      setShowConfirmDeleteAll(false);
+                      onCancel();
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className='flex items-center gap-4'>
+          {/* Select All */}
+          <label className='flex items-center space-x-2 cursor-pointer'>
+            <span className='text-gray-700'>Select All</span>
+            <input
+              type='checkbox'
+              checked={selectedQuestions.length === questions.length}
+              onChange={handleSelectAll}
+              className='w-5 h-5 accent-gray-800'
+            />
+          </label>
+        </div>
       </div>
 
       {/* Question List */}
@@ -170,7 +216,7 @@ export default function QuestionSelector({
       </div>
 
       {/* Sticky Footer with Buttons */}
-      <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white border-t border-gray-200 p-4 flex justify-between'>
+      <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white border-t border-gray-200 p-4 flex justify-between z-10'>
         <button
           onClick={onCancel}
           className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600'
