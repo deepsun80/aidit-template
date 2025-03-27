@@ -36,9 +36,20 @@ export default function Home() {
     null
   );
   const [showCancel, setShowCancel] = useState(false); // Used only for Cancel UI
+  const [showOnlyNotFound, setShowOnlyNotFound] = useState(false); // Used for Responses Not Found filter function
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cancelRequestedRef = useRef(false); // Used for Cancel logic in handleSubmitQuestions
+
+  // Not found items in qaList
+  const notFoundCount = qaList.filter((qa) =>
+    qa.answer
+      .trim()
+      .split('\n')
+      .at(-1)
+      ?.toLowerCase()
+      .includes('found in context: false')
+  ).length;
 
   // **Handle Chat Submission (Single Query)**
   const handleSubmitChat = async (e: React.FormEvent) => {
@@ -279,8 +290,11 @@ export default function Home() {
         ) : qaList?.length > 0 ? (
           <QACards
             qaList={qaList}
+            notFoundCount={notFoundCount || 0}
             onEdit={handleEditAnswer}
             onDelete={handleDeleteAnswer}
+            showOnlyNotFound={showOnlyNotFound}
+            setShowOnlyNotFound={setShowOnlyNotFound}
           />
         ) : (
           <WelcomeScreen
