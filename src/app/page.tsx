@@ -35,8 +35,10 @@ export default function Home() {
   const [submissionProgress, setSubmissionProgress] = useState<number | null>(
     null
   );
+  const [showCancel, setShowCancel] = useState(false); // Used only for Cancel UI
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cancelRequestedRef = useRef(false); // Used for Cancel logic in handleSubmitQuestions
 
   // **Handle Chat Submission (Single Query)**
   const handleSubmitChat = async (e: React.FormEvent) => {
@@ -66,8 +68,14 @@ export default function Home() {
 
     setLoading(true);
     setSubmissionProgress(0);
+    cancelRequestedRef.current = false;
 
     for (let i = 0; i < selectedQuestions.length; i++) {
+      if (cancelRequestedRef.current) {
+        console.log('Cancellation triggered.');
+        break;
+      }
+
       const question = selectedQuestions[i];
       // Check if this question already exists in qaList
       const exists = qaList.some((qa) => qa.question === question);
@@ -84,9 +92,10 @@ export default function Home() {
     }
 
     setSubmissionProgress(null);
-
-    setShowQuestionSelector(false);
     setLoading(false);
+    setShowQuestionSelector(false);
+    setShowCancel(false);
+    cancelRequestedRef.current = false;
   };
 
   // **Function to Process a Query**
@@ -214,12 +223,27 @@ export default function Home() {
         <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
           <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
           <span className='mt-2 text-gray-700 text-sm text-center px-4'>
-            {uploading
+            {showCancel
+              ? 'Cancelling...'
+              : uploading
               ? `Processing ${selectedFile?.name ?? 'file'}...`
               : submissionProgress !== null
               ? `Processing ${submissionProgress} / ${selectedQuestions.length}...`
               : 'Processing...'}
           </span>
+
+          {loading && (
+            <button
+              onClick={() => {
+                cancelRequestedRef.current = true;
+                setShowCancel(true);
+              }}
+              className='mt-4 px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition'
+              disabled={showCancel}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       )}
 
