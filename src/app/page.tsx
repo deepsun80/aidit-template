@@ -10,6 +10,7 @@ import QACards from '@/components/QACards';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import { useGlobalError } from '@/context/GlobalErrorContext';
 import { useQA } from '@/context/QAContext';
+import jsPDF from 'jspdf';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -189,6 +190,70 @@ export default function Home() {
     setQaList((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // **Download QAList as PDF**
+  const handleDownloadPDF = () => {
+    if (!qaList || qaList.length === 0) return;
+
+    const doc = new jsPDF();
+    const margin = 10;
+    let y = margin;
+
+    qaList.forEach((qa, index) => {
+      const question = `${index + 1}: ${qa.question}`;
+
+      // Break answer into lines
+      const lines = qa.answer.split('\n');
+
+      const citationLine = lines.find((line) =>
+        line.toLowerCase().startsWith('cited from:')
+      );
+
+      const mainAnswerLines = lines.filter(
+        (line) =>
+          !line.toLowerCase().startsWith('cited from:') &&
+          !line.toLowerCase().startsWith('found in context:')
+      );
+
+      const formattedAnswer = `A: ${mainAnswerLines.join('\n   ')}`;
+      const splitAnswer = doc.splitTextToSize(formattedAnswer, 180);
+
+      // Check for space and break page if needed
+      const requiredHeight =
+        8 + // question
+        splitAnswer.length * 6 + // answer
+        (citationLine ? 6 : 0) + // citation (if any)
+        6; // spacing after card
+
+      if (y + requiredHeight > 280) {
+        doc.addPage();
+        y = margin;
+      }
+
+      // Question in bold
+      doc.setFont('helvetica', 'bold');
+      doc.text(question, margin, y);
+      y += 8;
+
+      // Answer in normal font
+      doc.setFont('helvetica', 'normal');
+      doc.text(splitAnswer, margin, y);
+      y += splitAnswer.length * 6;
+
+      // Citation (if exists)
+      if (citationLine) {
+        const citationText = doc.splitTextToSize(citationLine, 180);
+        doc.setFont('helvetica', 'italic');
+        doc.text(citationText, margin, y);
+        y += citationText.length * 6;
+      }
+
+      // Space before next QA block
+      y += 6;
+    });
+
+    doc.save('audit_responses.pdf');
+  };
+
   // **Show loading state if session is still being checked**
   if (status === 'loading') {
     return <p className='text-center text-lg font-medium'>Loading...</p>;
@@ -295,6 +360,7 @@ export default function Home() {
             onDelete={handleDeleteAnswer}
             showOnlyNotFound={showOnlyNotFound}
             setShowOnlyNotFound={setShowOnlyNotFound}
+            onDownload={handleDownloadPDF}
           />
         ) : (
           <WelcomeScreen

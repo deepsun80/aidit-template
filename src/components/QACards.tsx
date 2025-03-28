@@ -7,6 +7,7 @@ import {
   CaretDownIcon,
   Pencil1Icon,
   TrashIcon,
+  DownloadIcon,
 } from '@radix-ui/react-icons';
 
 interface QACardsProps {
@@ -16,6 +17,7 @@ interface QACardsProps {
   notFoundCount: number;
   showOnlyNotFound: boolean;
   setShowOnlyNotFound: (val: boolean) => void;
+  onDownload: () => void;
 }
 
 export default function QACards({
@@ -25,6 +27,7 @@ export default function QACards({
   notFoundCount,
   showOnlyNotFound,
   setShowOnlyNotFound,
+  onDownload,
 }: QACardsProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -86,24 +89,37 @@ export default function QACards({
             {notFoundCount} out of {qaList.length}
           </span>
         </p>
-        <div className='flex items-center gap-2'>
-          <label htmlFor='toggle-not-found' className='text-gray-700 text-sm'>
-            View Responses Not Found
-          </label>
-          <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
-            <input
-              type='checkbox'
-              name='toggle-not-found'
-              id='toggle-not-found'
-              checked={showOnlyNotFound}
-              onChange={() => setShowOnlyNotFound(!showOnlyNotFound)}
-              className='toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 left-0 top-0 transition-all duration-200 ease-in-out checked:translate-x-full checked:border-gray-700'
-            />
-            <label
-              htmlFor='toggle-not-found'
-              className='toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer'
-            />
+        <div className='flex items-center gap-4'>
+          {/* View toggle */}
+          <div className='flex items-center gap-2'>
+            <label htmlFor='toggle-not-found' className='text-gray-700 text-sm'>
+              View Responses Not Found
+            </label>
+            <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
+              <input
+                type='checkbox'
+                name='toggle-not-found'
+                id='toggle-not-found'
+                checked={showOnlyNotFound}
+                onChange={() => setShowOnlyNotFound(!showOnlyNotFound)}
+                className='toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 left-0 top-0 transition-all duration-200 ease-in-out checked:translate-x-full checked:border-gray-700'
+              />
+              <label
+                htmlFor='toggle-not-found'
+                className='toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer'
+              />
+            </div>
           </div>
+
+          {/* Download button */}
+          <button
+            onClick={onDownload}
+            className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            disabled={qaList.length === 0}
+            title='Download PDF'
+          >
+            <DownloadIcon className='w-4 h-4 text-white' />
+          </button>
         </div>
       </div>
       {filteredList.map((qa: any, index: number) => {
