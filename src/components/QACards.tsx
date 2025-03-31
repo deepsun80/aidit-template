@@ -8,6 +8,8 @@ import {
   Pencil1Icon,
   TrashIcon,
   DownloadIcon,
+  Cross2Icon,
+  CheckIcon,
 } from '@radix-ui/react-icons';
 
 interface QACardsProps {
@@ -93,7 +95,7 @@ export default function QACards({
           {/* View toggle */}
           <div className='flex items-center gap-2'>
             <label htmlFor='toggle-not-found' className='text-gray-700 text-sm'>
-              View Responses Not Found
+              View Nonconformity Responses
             </label>
             <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
               <input
@@ -132,6 +134,8 @@ export default function QACards({
         const answerLines = qa.answer.trim().split('\n');
         const displayAnswer = answerLines.slice(0, -1).join('\n'); // removes the last line
 
+        const [questionText, referenceText] = qa.question.split(' - ');
+
         return (
           <div
             key={index}
@@ -140,7 +144,31 @@ export default function QACards({
             } relative`}
           >
             <div className='flex justify-between items-center mb-2'>
-              <p className='font-semibold text-gray-900'>{qa.question}</p>
+              <div className='flex flex-col'>
+                <p className='font-semibold text-gray-900'>{questionText}</p>
+                {referenceText && (
+                  <div className='flex items-center mt-1 gap-2'>
+                    <p
+                      className={`text-sm italic ${
+                        isNotFound ? 'text-red-600' : 'text-gray-500'
+                      }`}
+                    >
+                      Standard Reference: {referenceText}
+                    </p>
+                    <span
+                      className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                        isNotFound ? 'bg-red-500' : 'bg-green-500'
+                      }`}
+                    >
+                      {isNotFound ? (
+                        <Cross2Icon className='w-4 h-4 text-white' />
+                      ) : (
+                        <CheckIcon className='w-4 h-4 text-white' />
+                      )}
+                    </span>
+                  </div>
+                )}
+              </div>
 
               <div className='flex items-center gap-2'>
                 {/* Edit Button */}

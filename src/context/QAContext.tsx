@@ -7,9 +7,14 @@ type QAItem = {
   answer: string;
 };
 
+type AuditQuestion = {
+  question: string;
+  reference?: string;
+};
+
 type QAContextType = {
-  questions: string[] | null;
-  setQuestions: React.Dispatch<React.SetStateAction<string[] | null>>;
+  questions: AuditQuestion[] | null;
+  setQuestions: React.Dispatch<React.SetStateAction<AuditQuestion[] | null>>;
   deleteQuestions: () => void;
   qaList: QAItem[];
   setQaList: React.Dispatch<React.SetStateAction<QAItem[]>>;
@@ -22,7 +27,7 @@ type QAContextType = {
 const QAContext = createContext<QAContextType | undefined>(undefined);
 
 export const QAProvider = ({ children }: { children: React.ReactNode }) => {
-  const [questions, setQuestionsState] = useState<string[] | null>(null);
+  const [questions, setQuestionsState] = useState<AuditQuestion[] | null>(null);
   const [qaList, setQaListState] = useState<QAItem[]>([]);
   const [selectedQuestions, setSelectedQuestionsState] = useState<string[]>([]);
   const [selectedFile, setSelectedFileState] = useState<File | null>(null);

@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     // **Send text to LLM to extract audit questions**
     const auditQuestions = await extractAuditQuestions(extractedText);
 
-    console.log('Audit Questions:', auditQuestions);
+    console.log('Parsed audit questions with references:', auditQuestions);
 
     // Delete the temporary file after processing
     await fs.unlink(filePath);

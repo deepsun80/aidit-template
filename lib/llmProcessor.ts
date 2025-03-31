@@ -5,24 +5,27 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-/** Extracts audit-related questions from document text in a structured format */
-export async function extractAuditQuestions(text: string): Promise<string[]> {
-  const prompt = `You are an assistant that extracts audit-related questions from provided documents.
+/** Extracts audit-related questions and standard references in a structured format */
+export async function extractAuditQuestions(
+  text: string
+): Promise<{ question: string; reference: string }[]> {
+  const prompt = `You are an assistant that extracts audit-related audit questions and their corresponding Standard References from a tabular document.
 
-Instructions:
-- Extract **all complete audit-related questions** from the input text.
-- If a block of text contains **multiple full questions**, extract each of them as separate items.
-- Do NOT extract broken phrases or incomplete fragments like "Procedure?" or "Policy?" or "Procedure available?" or "Policy available?" unless they are part of a full question.
-- Do NOT include statements or metadata.
-- Return the output as a **JSON array of strings**. Example:
-  ["Is there a certain document available?",
-   "Is there a certain procedure in place?", 
-   "Is there evidence of a process?",
-   "Are certain procedures and processes established?"
+  Instructions:
+  - Extract all complete audit-related questions from the **Audit Topic** column.
+  - For each question, also extract the **Standard Reference** from the same row (usually ISO or CFR numbers).
+  - If a row has multiple complete questions, include each question with the same reference.
+  - Do NOT include broken phrases like "Procedure?" or "Available?" unless part of a full sentence.
+  - Format the output as a JSON array of objects with \`question\` and \`reference\` fields. Example:
+
+  [
+    { "question": "Is a procedure established for reviewing complaints?", "reference": "ISO 4.1, CFR §820.198" },
+    { "question": "Are records of changes maintained?", "reference": "CFR §820.30(i)" },
+    { "question": "Is the control of outsourced processes defined?", "reference": "ISO 4.2(d), CFR §820.50"}
   ]
-
-Here is the document text:
-${text}`;
+ 
+  Document text:
+  ${text}`;
 
   try {
     const response = await openai.chat.completions.create({
@@ -34,25 +37,29 @@ ${text}`;
 
     const content = response.choices[0].message?.content || '';
 
-    // Try parsing the response as JSON
     try {
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed)) {
-        return parsed.filter((q) => typeof q === 'string');
+        return parsed.filter(
+          (item) =>
+            typeof item === 'object' &&
+            typeof item.question === 'string' &&
+            typeof item.reference === 'string'
+        );
       } else {
-        throw new Error('Response was not a valid JSON array');
+        throw new Error('Response was not a valid JSON array of objects');
       }
     } catch (jsonError) {
       console.error('JSON parsing failed. Raw content:', content);
       throw new Error(
-        `Failed to parse questions as JSON: ${formatError(
+        `Failed to parse structured question objects: ${formatError(
           jsonError,
           String(jsonError)
         )}`
       );
     }
   } catch (error) {
-    console.error('Error extracting audit questions:', error);
+    console.error('Error extracting structured audit questions:', error);
     throw new Error(
       `Failed to extract audit questions: ${formatError(error, String(error))}`
     );
