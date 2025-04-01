@@ -7,6 +7,7 @@ import Sidebar from '@/components/SideBar';
 import ChatPrompt from '@/components/ChatPrompt';
 import QuestionSelector from '@/components/QuestionSelector';
 import QACards from '@/components/QACards';
+import NonconformityReport from '@/components/NonconformityReport';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import { useGlobalError } from '@/context/GlobalErrorContext';
 import { useQA } from '@/context/QAContext';
@@ -38,6 +39,7 @@ export default function Home() {
   );
   const [showCancel, setShowCancel] = useState(false); // Used only for Cancel UI
   const [showOnlyNotFound, setShowOnlyNotFound] = useState(false); // Used for Responses Not Found filter function
+  const [showNonconformityReport, setShowNonconformityReport] = useState(false); // Toggle nonconformity report and QA Cards
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cancelRequestedRef = useRef(false); // Used for Cancel logic in handleSubmitQuestions
@@ -96,9 +98,11 @@ export default function Home() {
         continue; // Skip if already present
       }
 
-      console.log('Processing query:', question);
+      const cleanQuestion = question.split(' - ')[0].trim();
 
-      await processQuery(question);
+      console.log('Processing query:', cleanQuestion);
+
+      await processQuery(cleanQuestion);
       setSubmissionProgress(i + 1);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
     }
@@ -375,15 +379,24 @@ export default function Home() {
             onSubmit={handleSubmitQuestions}
           />
         ) : qaList?.length > 0 ? (
-          <QACards
-            qaList={qaList}
-            notFoundCount={notFoundCount || 0}
-            onEdit={handleEditAnswer}
-            onDelete={handleDeleteAnswer}
-            showOnlyNotFound={showOnlyNotFound}
-            setShowOnlyNotFound={setShowOnlyNotFound}
-            onDownload={handleDownloadPDF}
-          />
+          showNonconformityReport ? (
+            <NonconformityReport
+              qaList={qaList}
+              notFoundCount={notFoundCount || 0}
+              onBack={() => setShowNonconformityReport(false)}
+            />
+          ) : (
+            <QACards
+              qaList={qaList}
+              notFoundCount={notFoundCount || 0}
+              onEdit={handleEditAnswer}
+              onDelete={handleDeleteAnswer}
+              showOnlyNotFound={showOnlyNotFound}
+              setShowOnlyNotFound={setShowOnlyNotFound}
+              onDownload={handleDownloadPDF}
+              onViewReport={() => setShowNonconformityReport(true)}
+            />
+          )
         ) : (
           <WelcomeScreen
             questions={questions}

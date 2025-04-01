@@ -21,6 +21,7 @@ interface QACardsProps {
   showOnlyNotFound: boolean;
   setShowOnlyNotFound: (val: boolean) => void;
   onDownload: () => void;
+  onViewReport: () => void;
 }
 
 export default function QACards({
@@ -31,6 +32,7 @@ export default function QACards({
   showOnlyNotFound,
   setShowOnlyNotFound,
   onDownload,
+  onViewReport,
 }: QACardsProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -86,11 +88,21 @@ export default function QACards({
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
       <p className='text-lg font-semibold'>Audit Stored Responses</p>
       <div className='flex justify-between items-center'>
-        <NonconformityProgress
-          notFoundCount={notFoundCount}
-          totalCount={qaList.length}
-          barColor={countColor}
-        />
+        <div className='flex items-center gap-4'>
+          <NonconformityProgress
+            notFoundCount={notFoundCount}
+            totalCount={qaList.length}
+            barColor={countColor}
+          />
+          {/* New View Report Button */}
+          <button
+            onClick={onViewReport}
+            className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
+            disabled={notFoundCount <= 0}
+          >
+            View Report
+          </button>
+        </div>
         <div className='flex items-center gap-4'>
           {/* View toggle */}
           <div className='flex items-center gap-2'>

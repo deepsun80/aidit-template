@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import NonconformityProgress from '@/components/NonconformityProgress';
 
 interface QAItem {
   question: string;
@@ -14,11 +15,13 @@ interface ReportData {
 interface NonconformityReportProps {
   qaList: QAItem[];
   onBack: () => void;
+  notFoundCount: number;
 }
 
 export default function NonconformityReport({
   qaList,
   onBack,
+  notFoundCount,
 }: NonconformityReportProps) {
   // Filter for "Found in Context: false"
   const notFoundItems = qaList.filter((qa) =>
@@ -28,7 +31,7 @@ export default function NonconformityReport({
   const referenceMap: ReportData = {};
 
   notFoundItems.forEach((qa) => {
-    const [_, referenceText] = qa.question.split(' - ');
+    const [, referenceText] = qa.question.split(' - ');
     if (!referenceText) return;
 
     const references = referenceText.split(/,\s*/); // handle multiple refs
@@ -42,40 +45,62 @@ export default function NonconformityReport({
     });
   });
 
+  /** Responses Not Found color calculation */
+  const totalCount = qaList.length;
+  const notFoundPercentage =
+    totalCount > 0 ? (notFoundCount / totalCount) * 100 : 0;
+
+  const countColor =
+    notFoundPercentage <= 25
+      ? '#1F2937' // gray
+      : notFoundPercentage <= 50
+      ? '#F97316' // orange
+      : '#DC2626'; // red
+  /** --- */
+
   return (
-    <div className='max-w-4xl mx-auto bg-white shadow-md rounded-sm p-6'>
-      <div className='flex justify-between items-center mb-6'>
-        <h2 className='text-xl font-semibold text-gray-800'>
-          Nonconformity Breakdown by Standard Reference
-        </h2>
+    <div className='max-w-4xl mx-auto flex flex-col gap-4 mt-2'>
+      <h2 className='text-lg font-semibold text-gray-900'>
+        Nonconformity Breakdown by Standard Reference
+      </h2>
+      <div className='flex items-center gap-4'>
+        <NonconformityProgress
+          notFoundCount={notFoundCount}
+          totalCount={qaList.length}
+          barColor={countColor}
+        />
+        {/* New View Report Button */}
         <button
           onClick={onBack}
-          className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 text-sm'
+          className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
         >
           Back to Responses
         </button>
       </div>
 
-      {Object.keys(referenceMap).length === 0 ? (
-        <p className='text-gray-600'>No nonconformities found.</p>
-      ) : (
-        <div className='space-y-6'>
-          {Object.entries(referenceMap).map(([section, refs]) => (
-            <div key={section}>
-              <h3 className='text-md font-bold text-gray-700 mb-2'>
-                {section}
-              </h3>
-              <ul className='list-disc list-inside text-gray-800 text-sm space-y-1'>
-                {Object.entries(refs).map(([ref, count]) => (
-                  <li key={ref}>
-                    <span className='font-medium'>{ref}:</span> {count}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className='bg-white shadow-md rounded-sm p-6'>
+        {Object.keys(referenceMap).length === 0 ? (
+          <p className='text-gray-600'>No nonconformities found.</p>
+        ) : (
+          <div className='space-y-6'>
+            {Object.entries(referenceMap).map(([section, refs]) => (
+              <div key={section}>
+                <h3 className='text-md font-bold text-gray-700 mb-2'>
+                  {section}
+                </h3>
+                <ul className='list-disc list-inside text-gray-800 text-sm space-y-1'>
+                  {Object.entries(refs).map(([ref, count]) => (
+                    <li key={ref}>
+                      <span className='font-medium text-red-500'>{ref}:</span>{' '}
+                      {count}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
