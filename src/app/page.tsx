@@ -196,14 +196,25 @@ export default function Home() {
 
     const doc = new jsPDF();
     const margin = 10;
+    const maxWidth = 180;
     let y = margin;
 
     qaList.forEach((qa, index) => {
-      const question = `${index + 1}: ${qa.question}`;
+      // Split question and reference from qa.question
+      const [rawQuestion, rawReference] = qa.question.split(' - ');
+      const questionText = `${index + 1}: ${rawQuestion.trim()}`;
+      const wrappedQuestion = doc.splitTextToSize(questionText, maxWidth);
 
-      // Break answer into lines
+      // Format reference if present
+      const referenceText = rawReference
+        ? `Standard Reference: ${rawReference.trim()}`
+        : null;
+      const wrappedReference = referenceText
+        ? doc.splitTextToSize(referenceText, maxWidth)
+        : [];
+
+      // Separate answer/citation sections
       const lines = qa.answer.split('\n');
-
       const citationLine = lines.find((line) =>
         line.toLowerCase().startsWith('cited from:')
       );
@@ -215,39 +226,50 @@ export default function Home() {
       );
 
       const formattedAnswer = `A: ${mainAnswerLines.join('\n   ')}`;
-      const splitAnswer = doc.splitTextToSize(formattedAnswer, 180);
+      const wrappedAnswer = doc.splitTextToSize(formattedAnswer, maxWidth);
+      const wrappedCitation = citationLine
+        ? doc.splitTextToSize(citationLine, maxWidth)
+        : [];
 
-      // Check for space and break page if needed
+      // --- Calculate required space ---
       const requiredHeight =
-        8 + // question
-        splitAnswer.length * 6 + // answer
-        (citationLine ? 6 : 0) + // citation (if any)
-        6; // spacing after card
+        wrappedQuestion.length * 6 +
+        (referenceText ? wrappedReference.length * 6 + 2 : 0) +
+        wrappedAnswer.length * 6 +
+        (citationLine ? wrappedCitation.length * 6 + 2 : 0) +
+        8; // extra spacing between QAs
 
+      // --- Add new page if needed ---
       if (y + requiredHeight > 280) {
         doc.addPage();
         y = margin;
       }
 
-      // Question in bold
+      // --- Render Question ---
       doc.setFont('helvetica', 'bold');
-      doc.text(question, margin, y);
-      y += 8;
+      doc.text(wrappedQuestion, margin, y);
+      y += wrappedQuestion.length * 6;
 
-      // Answer in normal font
-      doc.setFont('helvetica', 'normal');
-      doc.text(splitAnswer, margin, y);
-      y += splitAnswer.length * 6;
-
-      // Citation (if exists)
-      if (citationLine) {
-        const citationText = doc.splitTextToSize(citationLine, 180);
+      // --- Render Reference ---
+      if (referenceText) {
         doc.setFont('helvetica', 'italic');
-        doc.text(citationText, margin, y);
-        y += citationText.length * 6;
+        doc.text(wrappedReference, margin, y);
+        y += wrappedReference.length * 6 + 2;
       }
 
-      // Space before next QA block
+      // --- Render Answer ---
+      doc.setFont('helvetica', 'normal');
+      doc.text(wrappedAnswer, margin, y);
+      y += wrappedAnswer.length * 6;
+
+      // --- Render Citation ---
+      if (citationLine) {
+        doc.setFont('helvetica', 'italic');
+        doc.text(wrappedCitation, margin, y);
+        y += wrappedCitation.length * 6 + 2;
+      }
+
+      // --- Extra space before next item ---
       y += 6;
     });
 

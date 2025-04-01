@@ -2,7 +2,7 @@
 'use client';
 
 interface WelcomeScreenProps {
-  questions: string[] | null;
+  questions?: { question: string; reference?: string }[] | null;
   onOpenChat: () => void;
   onUploadClick: () => void;
   onViewQuestions: () => void;

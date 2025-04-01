@@ -13,7 +13,7 @@ interface SidebarProps {
   onToggleChat: () => void;
   onToggleQuestions: () => void;
   onUploadClick: () => void;
-  questions?: string[] | null;
+  questions?: { question: string; reference?: string }[] | null;
 }
 
 export default function Sidebar({

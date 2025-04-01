@@ -11,6 +11,7 @@ import {
   Cross2Icon,
   CheckIcon,
 } from '@radix-ui/react-icons';
+import NonconformityProgress from '@/components/NonconformityProgress';
 
 interface QACardsProps {
   qaList: { question: string; answer: string }[];
@@ -47,10 +48,10 @@ export default function QACards({
 
   const countColor =
     notFoundPercentage <= 25
-      ? 'text-gray-800'
+      ? '#1F2937' // gray
       : notFoundPercentage <= 50
-      ? 'text-orange-500'
-      : 'text-red-600';
+      ? '#F97316' // orange
+      : '#DC2626'; // red
   /** --- */
 
   /** Used for Responses Not Found filter function */
@@ -85,17 +86,16 @@ export default function QACards({
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
       <p className='text-lg font-semibold'>Audit Stored Responses</p>
       <div className='flex justify-between items-center'>
-        <p className='text-gray-700'>
-          Responses Not Found:{' '}
-          <span className={`font-semibold ${countColor}`}>
-            {notFoundCount} out of {qaList.length}
-          </span>
-        </p>
+        <NonconformityProgress
+          notFoundCount={notFoundCount}
+          totalCount={qaList.length}
+          barColor={countColor}
+        />
         <div className='flex items-center gap-4'>
           {/* View toggle */}
           <div className='flex items-center gap-2'>
             <label htmlFor='toggle-not-found' className='text-gray-700 text-sm'>
-              View Nonconformity Responses
+              View Nonconformity
             </label>
             <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
               <input
