@@ -26,9 +26,6 @@ export default function Sidebar({
     <aside className='fixed left-0 top-0 h-full w-72 bg-gray-800 text-white flex flex-col items-center py-10'>
       {/* Logo Placeholder */}
       <div className='mb-20'>
-        {/* <div className='w-48 h-20 bg-gray-700 flex items-center justify-center'>
-          <span className='text-2xl font-semibold'>Ai.Dit</span>
-        </div> */}
         <Image
           src='/AiDit-logo-v1.jpg'
           alt='AiDit Logo'
