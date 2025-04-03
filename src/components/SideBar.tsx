@@ -29,16 +29,10 @@ export default function Sidebar({
         {/* <div className='w-48 h-20 bg-gray-700 flex items-center justify-center'>
           <span className='text-2xl font-semibold'>Ai.Dit</span>
         </div> */}
-        {/* <Image
-          src='/Aidit-logo3a.png'
-          alt='Aidit Logo'
-          width={280} // Adjust size as needed
-          height={90}
-        /> */}
         <Image
-          src='/AiDit-logo3b.png'
+          src='/AiDit-logo-v1.jpg'
           alt='AiDit Logo'
-          width={240} // Adjust size as needed
+          width={220} // Adjust size as needed
           height={80}
         />
       </div>
