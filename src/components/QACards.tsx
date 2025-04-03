@@ -151,13 +151,16 @@ export default function QACards({
         return (
           <div
             key={index}
+            id={`qa-${index + 1}`}
             className={`p-6 bg-white rounded-sm border ${
               isNotFound ? 'border-red-500' : 'border-gray-300'
             } relative`}
           >
             <div className='flex justify-between items-center mb-2'>
               <div className='flex flex-col'>
-                <p className='font-semibold text-gray-900'>{questionText}</p>
+                <p className='font-semibold text-gray-900'>
+                  {index + 1}: {questionText}
+                </p>
                 {referenceText && (
                   <div className='flex items-center mt-1 gap-2'>
                     <p
