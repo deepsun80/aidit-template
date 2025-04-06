@@ -17,7 +17,7 @@ export default function ChatPrompt({
     <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 w-full bg-white border border-gray-300 p-4 z-30 max-w-4xl shadow-md'>
       {/* Text Area */}
       <textarea
-        className='w-full p-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-gray-600 bg-white text-gray-900'
+        className='w-full p-4 border border-gray-300 rounded-sm focus:outline-gray-400 bg-white text-gray-900'
         style={{ height: '12vh' }}
         value={input}
         onChange={(e) => onInputChange(e.target.value)}
@@ -25,7 +25,7 @@ export default function ChatPrompt({
       />
 
       {/* Footer Section */}
-      <div className='flex justify-between items-center pt-4 mt-4'>
+      <div className='flex justify-between items-center mt-8'>
         {/* Close Button */}
         <button
           type='button'

@@ -1,128 +1,65 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type QAItem = {
+export type QA = {
   question: string;
   answer: string;
 };
 
-type AuditQuestion = {
-  question: string;
-  reference?: string;
+type QAReport = {
+  title: string;
+  questions: string[] | null;
+  selectedQuestions: string[];
+  qaList: QA[];
+  selectedFile: File | null;
 };
 
 type QAContextType = {
-  questions: AuditQuestion[] | null;
-  setQuestions: React.Dispatch<React.SetStateAction<AuditQuestion[] | null>>;
+  report: QAReport | null;
+  setReport: (report: QAReport | null) => void;
+  updateReport: (partial: Partial<QAReport>) => void;
   deleteQuestions: () => void;
-  qaList: QAItem[];
-  setQaList: React.Dispatch<React.SetStateAction<QAItem[]>>;
-  selectedQuestions: string[];
-  setSelectedQuestions: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedFile: File | null;
-  setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
 };
 
 const QAContext = createContext<QAContextType | undefined>(undefined);
 
 export const QAProvider = ({ children }: { children: React.ReactNode }) => {
-  const [questions, setQuestionsState] = useState<AuditQuestion[] | null>(null);
-  const [qaList, setQaListState] = useState<QAItem[]>([]);
-  const [selectedQuestions, setSelectedQuestionsState] = useState<string[]>([]);
-  const [selectedFile, setSelectedFileState] = useState<File | null>(null);
+  const [report, setReport] = useState<QAReport | null>(null);
 
-  // Load from localStorage on mount
   useEffect(() => {
-    try {
-      const storedQuestions = localStorage.getItem('questions');
-      const storedQaList = localStorage.getItem('qaList');
-      const storedSelectedQuestions = localStorage.getItem('selectedQuestions');
-      const storedFile = localStorage.getItem('selectedFile');
-
-      if (storedQuestions) {
-        setQuestionsState(JSON.parse(storedQuestions));
-      }
-
-      if (storedQaList) {
-        setQaListState(JSON.parse(storedQaList));
-      }
-
-      if (storedFile) {
-        const parsed = JSON.parse(storedFile);
-        const blob = new Blob([Uint8Array.from(parsed.data)], {
-          type: parsed.type,
-        });
-        const file = new File([blob], parsed.name, { type: parsed.type });
-        setSelectedFileState(file);
-      }
-
-      if (storedSelectedQuestions) {
-        setSelectedQuestionsState(JSON.parse(storedSelectedQuestions));
-      } else {
-        setSelectedQuestionsState([]);
-      }
-    } catch (e) {
-      console.error('Failed to load QA state from localStorage:', e);
-    }
+    const stored = localStorage.getItem('qa-report');
+    if (stored) setReport(JSON.parse(stored));
   }, []);
 
-  // Delete questions
-  const deleteQuestions = () => {
-    setQuestionsState([]);
-    setSelectedQuestionsState([]);
+  useEffect(() => {
+    if (report) {
+      localStorage.setItem('qa-report', JSON.stringify(report));
+    } else {
+      localStorage.removeItem('qa-report');
+    }
+  }, [report]);
+
+  const updateReport = (partial: Partial<QAReport>) => {
+    setReport((prev) => (prev ? { ...prev, ...partial } : null));
   };
 
-  // Persist to localStorage when values change
-  useEffect(() => {
-    localStorage.setItem('questions', JSON.stringify(questions));
-  }, [questions]);
-
-  useEffect(() => {
-    localStorage.setItem('qaList', JSON.stringify(qaList));
-  }, [qaList]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      'selectedQuestions',
-      JSON.stringify(selectedQuestions)
+  const deleteQuestions = () => {
+    setReport((prev) =>
+      prev
+        ? {
+            ...prev,
+            questions: null,
+            selectedQuestions: [],
+            selectedFile: null,
+          }
+        : null
     );
-  }, [selectedQuestions]);
-
-  useEffect(() => {
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const arrayBuffer = reader.result as ArrayBuffer;
-        const byteArray = Array.from(new Uint8Array(arrayBuffer));
-        localStorage.setItem(
-          'selectedFile',
-          JSON.stringify({
-            name: selectedFile.name,
-            type: selectedFile.type,
-            data: byteArray,
-          })
-        );
-      };
-      reader.readAsArrayBuffer(selectedFile);
-    } else {
-      localStorage.removeItem('selectedFile');
-    }
-  }, [selectedFile]);
+  };
 
   return (
     <QAContext.Provider
-      value={{
-        questions,
-        setQuestions: setQuestionsState,
-        qaList,
-        setQaList: setQaListState,
-        selectedQuestions,
-        setSelectedQuestions: setSelectedQuestionsState,
-        deleteQuestions,
-        selectedFile,
-        setSelectedFile: setSelectedFileState,
-      }}
+      value={{ report, setReport, updateReport, deleteQuestions }}
     >
       {children}
     </QAContext.Provider>

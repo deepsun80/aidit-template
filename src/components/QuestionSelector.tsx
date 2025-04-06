@@ -101,7 +101,7 @@ export default function QuestionSelector({
       <p className='font-semibold text-lg'>Audit File Questions</p>
       <div className='bg-white rounded-sm shadow p-6'>
         {/* Sticky Header */}
-        <div className='sticky top-0 bg-white border-b border-gray-300 pb-2 mb-2 pr-2 z-10 flex justify-between items-center'>
+        <div className='sticky top-0 bg-white border-b border-gray-300 pb-4 mb-2 pr-2 z-10 flex justify-between items-center'>
           <div className='flex gap-4 items-center'>
             <div className='text-md text-gray-700'>
               <p className='text-sm font-semibold'>
@@ -245,7 +245,7 @@ export default function QuestionSelector({
         </div>
 
         {/* Footer */}
-        <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white border-t border-gray-200 p-4 flex justify-between z-10'>
+        <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white border-t border-gray-200 pb-2 pt-8 flex justify-between z-10'>
           <button
             onClick={onCancel}
             className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600'

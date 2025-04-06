@@ -10,6 +10,10 @@ import {
   DownloadIcon,
   Cross2Icon,
   CheckIcon,
+  PlusIcon,
+  UploadIcon,
+  EyeOpenIcon,
+  DotFilledIcon,
 } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/NonconformityProgress';
 
@@ -22,6 +26,11 @@ interface QACardsProps {
   setShowOnlyNotFound: (val: boolean) => void;
   onDownload: () => void;
   onViewReport: () => void;
+  reportTitle: string;
+  onAskNew: () => void;
+  onUploadNew: () => void;
+  onViewUploaded: () => void;
+  hasUploadedQuestions: boolean;
 }
 
 export default function QACards({
@@ -33,6 +42,11 @@ export default function QACards({
   setShowOnlyNotFound,
   onDownload,
   onViewReport,
+  reportTitle,
+  onAskNew,
+  onUploadNew,
+  onViewUploaded,
+  hasUploadedQuestions,
 }: QACardsProps) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -40,28 +54,27 @@ export default function QACards({
   const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(
     null
   );
-
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  /** Responses Not Found color calculation */
   const totalCount = qaList.length;
   const notFoundPercentage =
     totalCount > 0 ? (notFoundCount / totalCount) * 100 : 0;
-
   const countColor =
     notFoundPercentage <= 25
-      ? '#1F2937' // gray
+      ? '#48bb78' // Tailwind green-500
       : notFoundPercentage <= 50
-      ? '#F97316' // orange
-      : '#DC2626'; // red
-  /** --- */
+      ? '#F97316' // Tailwind orange-500
+      : '#DC2626'; // Tailwind red-500
 
-  /** Used for Responses Not Found filter function */
   const filteredList = showOnlyNotFound
-    ? qaList.filter((qa) => {
-        const lastLine = qa.answer.trim().split('\n').slice(-1)[0];
-        return lastLine.toLowerCase().includes('found in context: false');
-      })
+    ? qaList.filter((qa) =>
+        qa.answer
+          .trim()
+          .split('\n')
+          .slice(-1)[0]
+          .toLowerCase()
+          .includes('found in context: false')
+      )
     : qaList;
 
   const toggleAccordion = (index: number) => {
@@ -70,23 +83,52 @@ export default function QACards({
     );
   };
 
-  // Open the first item of qaList on mount or when qaList updates
   useEffect(() => {
-    if (qaList.length > 0) {
-      setOpenIndexes([qaList.length - 1]);
-    }
+    if (qaList.length > 0) setOpenIndexes([qaList.length - 1]);
   }, [qaList]);
 
-  // Scroll to the bottom when qaList updates
   useEffect(() => {
-    if (bottomRef.current) {
+    if (bottomRef.current)
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
   }, [qaList]);
 
   return (
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
-      <p className='text-lg font-semibold'>Audit Stored Responses</p>
+      {/* Header Section */}
+      <div className='flex justify-between items-center mb-4'>
+        <p className='text-lg font-semibold'>Report: {reportTitle}</p>
+        <div className='flex gap-2'>
+          <button
+            onClick={onAskNew}
+            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            title='Ask New Question'
+          >
+            <PlusIcon className='text-white w-5 h-5' />
+          </button>
+          <div className='relative'>
+            <button
+              onClick={onViewUploaded}
+              className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
+              disabled={!hasUploadedQuestions}
+              title='View Uploaded Questions'
+            >
+              <EyeOpenIcon className='text-white w-5 h-5' />
+            </button>
+            {/* {hasUploadedQuestions && (
+              <DotFilledIcon className='absolute top-0 right-0 text-red-500 w-3 h-3' />
+            )} */}
+          </div>
+          <button
+            onClick={onUploadNew}
+            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            title='Upload New Questions'
+          >
+            <UploadIcon className='text-white w-5 h-5' />
+          </button>
+        </div>
+      </div>
+
+      {/* Progress Bar and Controls */}
       <div className='flex justify-between items-center'>
         <div className='flex items-center gap-4'>
           <NonconformityProgress
@@ -94,7 +136,6 @@ export default function QACards({
             totalCount={qaList.length}
             barColor={countColor}
           />
-          {/* New View Report Button */}
           <button
             onClick={onViewReport}
             className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
@@ -104,28 +145,30 @@ export default function QACards({
           </button>
         </div>
         <div className='flex items-center gap-4'>
-          {/* View toggle */}
-          <div className='flex items-center gap-2'>
-            <label htmlFor='toggle-not-found' className='text-gray-700 text-sm'>
-              View Nonconformity
-            </label>
-            <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
-              <input
-                type='checkbox'
-                name='toggle-not-found'
-                id='toggle-not-found'
-                checked={showOnlyNotFound}
-                onChange={() => setShowOnlyNotFound(!showOnlyNotFound)}
-                className='toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 left-0 top-0 transition-all duration-200 ease-in-out checked:translate-x-full checked:border-gray-700'
-              />
+          {notFoundCount > 0 && (
+            <div className='flex items-center gap-2'>
               <label
                 htmlFor='toggle-not-found'
-                className='toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer'
-              />
+                className='text-gray-700 text-sm'
+              >
+                View Nonconformity
+              </label>
+              <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
+                <input
+                  type='checkbox'
+                  name='toggle-not-found'
+                  id='toggle-not-found'
+                  checked={showOnlyNotFound}
+                  onChange={() => setShowOnlyNotFound(!showOnlyNotFound)}
+                  className='toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 left-0 top-0 transition-all duration-200 ease-in-out checked:translate-x-full checked:border-gray-700'
+                />
+                <label
+                  htmlFor='toggle-not-found'
+                  className='toggle-label block overflow-hidden h-6 rounded-full bg-gray-400 cursor-pointer'
+                />
+              </div>
             </div>
-          </div>
-
-          {/* Download button */}
+          )}
           <button
             onClick={onDownload}
             className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
@@ -136,16 +179,16 @@ export default function QACards({
           </button>
         </div>
       </div>
+
+      {/* Cards */}
       {filteredList.map((qa: any, index: number) => {
         const isNotFound = qa.answer
           .trim()
           .split('\n')
           .pop()
           ?.includes('Found in Context: false');
-
         const answerLines = qa.answer.trim().split('\n');
-        const displayAnswer = answerLines.slice(0, -1).join('\n'); // removes the last line
-
+        const displayAnswer = answerLines.slice(0, -1).join('\n');
         const [questionText, referenceText] = qa.question.split(' - ');
 
         return (
@@ -184,9 +227,7 @@ export default function QACards({
                   </div>
                 )}
               </div>
-
               <div className='flex items-center gap-2'>
-                {/* Edit Button */}
                 <button
                   onClick={() => {
                     setEditIndex(index);
@@ -198,8 +239,6 @@ export default function QACards({
                 >
                   <Pencil1Icon className='w-4 h-4 text-white' />
                 </button>
-
-                {/* Delete Button */}
                 <div className='relative'>
                   <button
                     onClick={() => {
@@ -212,8 +251,6 @@ export default function QACards({
                   >
                     <TrashIcon className='w-4 h-4 text-white' />
                   </button>
-
-                  {/* Confirm Popover */}
                   {confirmDeleteIndex === index && (
                     <div className='absolute top-10 right-0 bg-white border border-gray-300 shadow-md rounded-sm p-3 z-10'>
                       <p className='text-sm mb-2 text-gray-800'>
@@ -239,10 +276,7 @@ export default function QACards({
                     </div>
                   )}
                 </div>
-
-                {/* Toggle Button */}
                 <button
-                  type='button'
                   onClick={() => toggleAccordion(index)}
                   className='text-gray-600 hover:text-gray-900 transition'
                 >
@@ -254,12 +288,9 @@ export default function QACards({
                 </button>
               </div>
             </div>
-
-            {/* Answer Section */}
             {openIndexes.includes(index) && (
               <div className='transition-all duration-300 ease-in-out mt-4'>
                 <div className='border-t border-gray-300 my-4'></div>
-
                 {editIndex === index ? (
                   <>
                     <textarea
@@ -269,15 +300,12 @@ export default function QACards({
                       onChange={(e) => setEditText(e.target.value)}
                     />
                     <div className='flex justify-between mt-3'>
-                      {/* Cancel button */}
                       <button
                         onClick={() => setEditIndex(null)}
                         className='px-4 py-2 bg-gray-200 text-gray-800 rounded-sm hover:bg-gray-300 text-sm'
                       >
                         Cancel
                       </button>
-
-                      {/* Confirm Changes button */}
                       <button
                         onClick={() => {
                           onEdit(index, editText);
@@ -300,8 +328,14 @@ export default function QACards({
         );
       })}
 
-      {/* Invisible div to scroll into view */}
       <div ref={bottomRef} />
+
+      {/* Sticky Submit Footer */}
+      <div className='sticky bottom-0 left-0 w-full flex justify-end'>
+        <button className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 transition'>
+          Submit
+        </button>
+      </div>
     </div>
   );
 }

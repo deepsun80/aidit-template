@@ -76,7 +76,7 @@ export default function NonconformityReport({
 
   return (
     <div className='max-w-4xl mx-auto flex flex-col gap-4 mt-2'>
-      <h2 className='text-lg font-semibold text-gray-900'>
+      <h2 className='text-lg font-semibold text-gray-900 mb-6'>
         Nonconformity Breakdown by Standard Reference
       </h2>
       <div className='flex items-center gap-4'>
@@ -95,7 +95,9 @@ export default function NonconformityReport({
 
       <div className='bg-white shadow-md rounded-sm p-6'>
         {Object.keys(referenceMap).length === 0 ? (
-          <p className='text-gray-600'>No nonconformities found.</p>
+          <p className='text-gray-600'>
+            No Standard Reference Nonconformities Found.
+          </p>
         ) : (
           <div className='space-y-6'>
             {Object.entries(referenceMap).map(([section, refs]) => (

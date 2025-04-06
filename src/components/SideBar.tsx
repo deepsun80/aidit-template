@@ -1,72 +1,56 @@
 'use client';
 
 import {
+  DashboardIcon,
+  FileTextIcon,
+  ArchiveIcon,
+  LayersIcon,
   ExitIcon,
-  ChatBubbleIcon,
-  UploadIcon,
-  FileIcon,
 } from '@radix-ui/react-icons';
 import { signOut } from 'next-auth/react';
-import Image from 'next/image';
 
-interface SidebarProps {
-  onToggleChat: () => void;
-  onToggleQuestions: () => void;
-  onUploadClick: () => void;
-  questions?: { question: string; reference?: string }[] | null;
-}
+export default function Sidebar() {
+  const navItems = [
+    {
+      label: 'Dashboard',
+      enabled: false,
+      icon: <DashboardIcon className='w-6 h-6 text-inherit' />,
+    },
+    {
+      label: 'Audit Management',
+      enabled: true,
+      icon: <FileTextIcon className='w-6 h-6 text-inherit' />,
+    },
+    {
+      label: 'Supplier Audits',
+      enabled: false,
+      icon: <ArchiveIcon className='w-6 h-6 text-inherit' />,
+    },
+    {
+      label: 'Internal Audits',
+      enabled: false,
+      icon: <LayersIcon className='w-6 h-6 text-inherit' />,
+    },
+  ];
 
-export default function Sidebar({
-  onToggleChat,
-  onToggleQuestions,
-  onUploadClick,
-  questions,
-}: SidebarProps) {
   return (
-    <aside className='fixed left-0 top-0 h-full w-72 bg-gray-800 text-white flex flex-col items-center py-10'>
-      {/* Logo Placeholder */}
-      <div className='mb-20'>
-        <Image
-          src='/AiDit-logo-v1.jpg'
-          alt='AiDit Logo'
-          width={220} // Adjust size as needed
-          height={80}
-        />
-      </div>
-
-      {/* Navigation Icons */}
-      <nav className='flex flex-col flex-start space-y-8 flex-grow gap-4'>
-        <button
-          onClick={onToggleChat}
-          className='flex items-center gap-2 text-gray-300 hover:text-white transition'
-        >
-          <ChatBubbleIcon className='w-6 h-6' />
-          <span className='text-md'>Ask New Question</span>
-        </button>
-
-        <button
-          onClick={onToggleQuestions}
-          disabled={!questions || questions.length === 0}
-          className={`flex items-center gap-2 ${
-            questions && questions.length > 0
-              ? 'text-white'
-              : 'text-gray-500 cursor-not-allowed'
-          } transition`}
-        >
-          <FileIcon className='w-6 h-6' />
-          <span className='text-md'>View Uploaded Questions</span>
-          {questions && questions.length > 0 && (
-            <span className='w-2 h-2 bg-red-500 rounded-full ml-2'></span>
-          )}
-        </button>
-
-        <button
-          onClick={onUploadClick}
-          className='flex items-center gap-2 text-gray-300 hover:text-white transition'
-        >
-          <UploadIcon className='w-6 h-6' />
-          <span className='text-md'>Upload New Questionnaire</span>
-        </button>
+    <aside className='w-72 bg-gray-800 text-white flex flex-col items-center pt-10 min-h-full'>
+      {/* Nav Items */}
+      <nav className='flex flex-col gap-6 text-md w-full px-6'>
+        {navItems.map((item, idx) => (
+          <button
+            key={idx}
+            disabled={!item.enabled}
+            className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
+              item.enabled
+                ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                : 'text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
       </nav>
 
       {/* Sign Out */}
@@ -74,7 +58,7 @@ export default function Sidebar({
         onClick={() => signOut()}
         className='flex items-center gap-2 text-gray-300 hover:text-white transition mt-auto mb-6'
       >
-        <ExitIcon className='w-6 h-6' />
+        <ExitIcon className='w-6 h-6 text-inherit' />
         <span className='text-md'>Sign Out</span>
       </button>
     </aside>
