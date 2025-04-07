@@ -78,6 +78,8 @@ export default function Home() {
     setSubmissionProgress(0);
     cancelRequestedRef.current = false;
 
+    let currentQaList = [...qaList]; // track updates manually
+
     for (let i = 0; i < selectedQuestions.length; i++) {
       if (cancelRequestedRef.current) {
         console.log('Cancellation triggered.');
@@ -87,7 +89,7 @@ export default function Home() {
       const question = selectedQuestions[i];
       const cleanQuestion = question.split(' - ')[0].trim();
 
-      const exists = qaList.some((qa) => {
+      const exists = currentQaList.some((qa) => {
         const [qText] = qa.question.split(' - ');
         return qText.trim() === cleanQuestion;
       });
@@ -99,7 +101,20 @@ export default function Home() {
 
       console.log('Processing query:', cleanQuestion);
 
-      await processQuery(cleanQuestion);
+      const res = await fetch('/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: cleanQuestion }),
+      });
+
+      const data = await res.json();
+
+      if (data.answer) {
+        const newQa = { question: data.question, answer: data.answer };
+        currentQaList = [...currentQaList, newQa];
+        updateReport({ qaList: currentQaList });
+      }
+
       setSubmissionProgress(i + 1);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
@@ -111,19 +126,20 @@ export default function Home() {
     cancelRequestedRef.current = false;
   };
 
-  const processQuery = async (query: string) => {
+  const processQuery = async (query: string, currentQaList: QA[] = []) => {
     try {
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
       });
+
       const data = await res.json();
 
-      if (data.answer && report) {
+      if (data.answer) {
         updateReport({
           qaList: [
-            ...(report.qaList || []),
+            ...currentQaList,
             { question: data.question, answer: data.answer },
           ],
         });
