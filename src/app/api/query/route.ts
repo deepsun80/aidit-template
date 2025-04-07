@@ -6,7 +6,10 @@ import { formatError } from '@lib/helpers';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const query = body?.query?.trim();
+    const rawQuery = body?.query?.trim();
+    const query = rawQuery?.includes(' - ')
+      ? rawQuery.split(' - ')[0].trim()
+      : rawQuery;
 
     if (!query) {
       return NextResponse.json(

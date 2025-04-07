@@ -78,7 +78,7 @@ export default function Home() {
     setSubmissionProgress(0);
     cancelRequestedRef.current = false;
 
-    let currentQaList = [...qaList]; // track updates manually
+    let currentQaList = [...qaList];
 
     for (let i = 0; i < selectedQuestions.length; i++) {
       if (cancelRequestedRef.current) {
@@ -87,24 +87,22 @@ export default function Home() {
       }
 
       const question = selectedQuestions[i];
-      const cleanQuestion = question.split(' - ')[0].trim();
 
-      const exists = currentQaList.some((qa) => {
-        const [qText] = qa.question.split(' - ');
-        return qText.trim() === cleanQuestion;
-      });
+      const exists = currentQaList.some(
+        (qa) => qa.question.trim() === question.trim()
+      );
 
       if (exists) {
-        console.log(`Skipping duplicate question: ${cleanQuestion}`);
+        console.log(`Skipping duplicate question: ${question}`);
         continue;
       }
 
-      console.log('Processing query:', cleanQuestion);
+      console.log('Processing query:', question);
 
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: cleanQuestion }),
+        body: JSON.stringify({ query: question }),
       });
 
       const data = await res.json();
