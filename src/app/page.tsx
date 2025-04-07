@@ -274,10 +274,10 @@ export default function Home() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-100 flex flex-col relative'>
-      <Header />
-      <div className='flex flex-row flex-grow'>
-        <Sidebar />
+    <div className='min-h-screen bg-gray-100 flex flex-row'>
+      <Sidebar />
+      <div className='flex flex-col flex-1'>
+        <Header />
         {(loading || uploading) && (
           <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
             <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>

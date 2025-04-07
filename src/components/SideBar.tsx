@@ -8,6 +8,7 @@ import {
   ExitIcon,
 } from '@radix-ui/react-icons';
 import { signOut } from 'next-auth/react';
+import Image from 'next/image';
 
 export default function Sidebar() {
   const navItems = [
@@ -34,7 +35,16 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className='w-72 bg-gray-800 text-white flex flex-col items-center pt-10 min-h-full'>
+    <aside className='w-72 bg-gray-800 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
+      {/* Logo */}
+      <div className='flex items-center'>
+        <Image
+          src='/AiDit-logo-v1.jpg'
+          alt='AiDit Logo'
+          width={220}
+          height={80}
+        />
+      </div>
       {/* Nav Items */}
       <nav className='flex flex-col gap-6 text-md w-full px-6'>
         {navItems.map((item, idx) => (
