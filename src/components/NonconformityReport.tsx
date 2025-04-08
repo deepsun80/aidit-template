@@ -56,7 +56,7 @@ export default function NonconformityReport({
 
   const countColor =
     notFoundPercentage <= 25
-      ? '#1F2937'
+      ? '#22c55e'
       : notFoundPercentage <= 50
       ? '#F97316'
       : '#DC2626';
