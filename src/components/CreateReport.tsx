@@ -26,7 +26,7 @@ export default function CreateReport({
   return (
     <div className='max-w-xl mx-auto'>
       <h2 className='text-2xl font-semibold mb-6 text-gray-900'>
-        Create Report
+        Create Audit
       </h2>
       <div className='bg-white p-6 rounded shadow-sm border border-gray-200'>
         <label className='block mb-2 text-sm font-medium text-gray-700'>

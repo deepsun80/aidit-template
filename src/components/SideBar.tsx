@@ -6,6 +6,9 @@ import {
   ArchiveIcon,
   LayersIcon,
   ExitIcon,
+  FilePlusIcon,
+  EnvelopeOpenIcon,
+  CaretUpIcon,
 } from '@radix-ui/react-icons';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
@@ -21,6 +24,18 @@ export default function Sidebar() {
       label: 'Audit Management',
       enabled: true,
       icon: <FileTextIcon className='w-6 h-6 text-inherit' />,
+      subItems: [
+        {
+          label: 'Create',
+          enabled: true,
+          icon: <FilePlusIcon className='w-4 h-4 text-inherit' />,
+        },
+        {
+          label: 'Open',
+          enabled: true,
+          icon: <EnvelopeOpenIcon className='w-4 h-4 text-inherit' />,
+        },
+      ],
     },
     {
       label: 'Supplier Audits',
@@ -45,21 +60,46 @@ export default function Sidebar() {
           height={80}
         />
       </div>
+
       {/* Nav Items */}
       <nav className='flex flex-col gap-6 text-md w-full px-6'>
         {navItems.map((item, idx) => (
-          <button
-            key={idx}
-            disabled={!item.enabled}
-            className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
-              item.enabled
-                ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                : 'text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </button>
+          <div key={idx}>
+            <button
+              disabled={!item.enabled}
+              className={`flex items-center justify-between px-4 py-2 rounded-sm transition w-full ${
+                item.enabled
+                  ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                  : 'text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <div className='flex gap-2'>
+                {item.icon}
+                <span>{item.label}</span>
+              </div>
+              {item.subItems && <CaretUpIcon className='w-4 h-4 text-white' />}
+            </button>
+
+            {/* Sub-Items */}
+            {item.subItems && (
+              <div className='ml-8 mt-4 flex flex-col gap-4'>
+                {item.subItems.map((sub, subIdx) => (
+                  <button
+                    key={subIdx}
+                    disabled={!sub.enabled}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-sm text-sm transition ${
+                      sub.label === 'Create'
+                        ? 'bg-gray-700 text-white'
+                        : 'text-gray-300 hover:text-white'
+                    }`}
+                  >
+                    {sub.icon}
+                    <span>{sub.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
       </nav>
 

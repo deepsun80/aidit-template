@@ -14,6 +14,7 @@ import CreateReport from '@/components/CreateReport';
 import { useGlobalError } from '@/context/GlobalErrorContext';
 import { useQA } from '@/context/QAContext';
 import jsPDF from 'jspdf';
+import { QA } from '@/context/QAContext';
 
 export default function Home() {
   const { data: session, status } = useSession();

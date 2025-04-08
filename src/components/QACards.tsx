@@ -13,7 +13,6 @@ import {
   PlusIcon,
   UploadIcon,
   EyeOpenIcon,
-  DotFilledIcon,
 } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/NonconformityProgress';
 
@@ -96,7 +95,7 @@ export default function QACards({
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
       {/* Header Section */}
       <div className='flex justify-between items-center mb-4'>
-        <p className='text-lg font-semibold'>Report: {reportTitle}</p>
+        <p className='text-lg font-semibold'>Audit: {reportTitle}</p>
         <div className='flex gap-2'>
           <button
             onClick={onAskNew}
@@ -114,9 +113,6 @@ export default function QACards({
             >
               <EyeOpenIcon className='text-white w-5 h-5' />
             </button>
-            {/* {hasUploadedQuestions && (
-              <DotFilledIcon className='absolute top-0 right-0 text-red-500 w-3 h-3' />
-            )} */}
           </div>
           <button
             onClick={onUploadNew}
@@ -141,7 +137,7 @@ export default function QACards({
             className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
             disabled={notFoundCount <= 0}
           >
-            View Report
+            View Audit
           </button>
         </div>
         <div className='flex items-center gap-4'>

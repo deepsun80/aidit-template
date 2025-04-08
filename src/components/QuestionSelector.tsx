@@ -98,7 +98,7 @@ export default function QuestionSelector({
 
   return (
     <div className='max-w-4xl mx-auto text-gray-900 flex flex-col gap-4 mt-2'>
-      <p className='font-semibold text-lg'>Audit File Questions</p>
+      <p className='font-semibold text-lg'>Uploaded File Questions</p>
       <div className='bg-white rounded-sm shadow p-6'>
         {/* Sticky Header */}
         <div className='sticky top-0 bg-white border-b border-gray-300 pb-4 mb-2 pr-2 z-10 flex justify-between items-center'>
