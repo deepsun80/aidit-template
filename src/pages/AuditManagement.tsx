@@ -8,7 +8,7 @@ import NonconformityReport from '@/components/NonconformityReport';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import CreateReport from '@/components/CreateReport';
 import { useGlobalError } from '@/context/GlobalErrorContext';
-import { useQA, QA } from '@/context/QAContext';
+import { useQA } from '@/context/QAContext';
 import jsPDF from 'jspdf';
 
 export default function AuditManagement() {
@@ -116,7 +116,7 @@ export default function AuditManagement() {
     cancelRequestedRef.current = false;
   };
 
-  const processQuery = async (query: string, currentQaList: QA[] = []) => {
+  const processQuery = async (query: string) => {
     try {
       const res = await fetch('/api/query', {
         method: 'POST',
@@ -126,10 +126,10 @@ export default function AuditManagement() {
 
       const data = await res.json();
 
-      if (data.answer) {
+      if (data.answer && report) {
         updateReport({
           qaList: [
-            ...currentQaList,
+            ...(report.qaList || []),
             { question: data.question, answer: data.answer },
           ],
         });

@@ -3,10 +3,11 @@
     Builds query context to include document count.
 */
 
-export function buildQueryOptions(query: string) {
-  // return {
-  //   query: `${query}. Cite the document and page for the information in response in a new paragraph after the response.`,
-  // };
+export function buildQueryOptions(rawQuery: string) {
+  const queryOnly = rawQuery.includes(' - ')
+    ? rawQuery.split(' - ')[0].trim()
+    : rawQuery.trim();
+
   return {
     query: `
       Answer the following question using only the provided documents. 
@@ -20,7 +21,7 @@ export function buildQueryOptions(query: string) {
       If the answer is not found in the context, do not include the citation paragraph. Instead, just include:
         Found in Context: false
 
-      Question: ${query}
+      Question: ${queryOnly}
     `.trim(),
   };
 }
