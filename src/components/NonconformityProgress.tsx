@@ -16,8 +16,8 @@ export default function NonconformityProgress({
   const percentage = totalCount === 0 ? 0 : (notFoundCount / totalCount) * 100;
 
   return (
-    <div className='mb-4'>
-      <p className='text-sm font-semibold text-gray-800 mb-1'>Nonconformity</p>
+    <div>
+      {/* <p className='text-sm font-semibold text-gray-800 mb-1'>Nonconformity</p> */}
       <div className='w-full bg-gray-200 h-4 rounded-sm overflow-hidden'>
         <div
           className={`h-4 rounded-sm transition-all duration-300`}

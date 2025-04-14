@@ -3,66 +3,118 @@
 import { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/NonconformityProgress';
+import AlertPopover from '@/components/AlertPopover';
 
 type Tab = 'pending' | 'recent' | 'scheduled';
 
-interface AuditItem {
-  title: string;
+interface ReportTitle {
+  id: string;
+  customer: string;
+}
+
+interface AuditItem extends ReportTitle {
   date: string;
   nonconformity?: { notFound: number; total: number };
 }
 
-const generateRandomAudits = (): Record<Tab, AuditItem[]> => ({
-  pending: Array.from({ length: 5 }, (_, i) => ({
-    title: `Pending Audit ${i + 1} - Device Inspection`,
-    date: `2024-0${(i % 9) + 1}-15`,
-    nonconformity: {
-      notFound: Math.floor(Math.random() * 50),
-      total: Math.floor(Math.random() * 50 + 51),
-    },
-  })),
-  recent: Array.from({ length: 5 }, (_, i) => {
-    const total = Math.floor(Math.random() * 40 + 60);
-    const maxNotFound = Math.floor(total * 0.25);
-    const notFound = Math.floor(Math.random() * (maxNotFound + 1));
-
-    return {
-      title: `Recent Report ${i + 1} - Post Market Review`,
-      date: `2024-0${(i % 9) + 1}-10`,
-      nonconformity: {
-        notFound,
-        total,
-      },
-    };
-  }),
-  scheduled: Array.from({ length: 5 }, (_, i) => ({
-    title: `Scheduled Audit ${i + 1} - Supplier Verification`,
-    date: `2024-0${(i % 9) + 1}-20`,
-  })),
-});
-
-const reportTitles = [
-  'Sterilization Equipment Check',
-  'Post-Market Surveillance Summary',
-  'Biocompatibility Test Report',
-  'Packaging Seal Integrity Review',
-  'Design Validation Audit',
-  'Labeling Compliance Verification',
-  'Software Validation Report',
-  'Risk Management File Review',
-  'Supplier Quality Assessment',
-  'CAPA Investigation Summary',
-  'Complaint Handling Audit',
-  'Device History Record Review',
-  'Traceability Matrix Evaluation',
-  'Calibration Certificate Summary',
-  'Process Validation Report',
-  'Environmental Controls Log',
-  'Incoming Material Inspection',
-  'Batch Release Form Review',
-  'Training Record Audit',
-  'Internal Audit Program Overview',
+const randomDates2025 = [
+  '01162025',
+  '02282025',
+  '03072025',
+  '04122025',
+  '05162025',
+  '06062025',
+  '06222025',
+  '07282025',
+  '08022025',
+  '09122025',
+  '09202025',
+  '10042025',
+  '10272025',
+  '11012025',
+  '11162025',
+  '12052025',
+  '12202025',
+  '12272025',
+  '08062025',
+  '03162025',
 ];
+
+const customers = [
+  'ABC Inc',
+  'MedEquip Solutions',
+  'Nova Diagnostics',
+  'Pioneer Labs',
+  'SterileTech Corp',
+  'Helix Medical',
+  'BioPro Systems',
+  'Precision Devices',
+  'Axis Medtech',
+  'VitaGen Instruments',
+];
+
+const formatDateFromId = (id: string): string => {
+  const mm = id.slice(0, 2);
+  const dd = id.slice(2, 4);
+  const yyyy = id.slice(4, 8);
+  return `${mm}/${dd}/${yyyy}`;
+};
+
+export const generateReportTitles = (): ReportTitle[] => {
+  const titles: ReportTitle[] = [];
+
+  for (let i = 0; i < 15; i++) {
+    const dateCode = randomDates2025[i % randomDates2025.length];
+    const customer = customers[i % customers.length];
+    const abbrev = customer
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase();
+
+    titles.push({
+      id: `${dateCode}${abbrev}`,
+      customer,
+    });
+  }
+
+  return titles;
+};
+
+export const generateRandomAudits = (
+  titles: ReportTitle[]
+): Record<Tab, AuditItem[]> => {
+  return {
+    pending: titles.slice(0, 5).map(({ id, customer }) => ({
+      id,
+      customer,
+      date: formatDateFromId(id),
+      nonconformity: {
+        notFound: Math.floor(Math.random() * 50),
+        total: Math.floor(Math.random() * 50 + 51),
+      },
+    })),
+    recent: titles.slice(5, 10).map(({ id, customer }) => {
+      const total = Math.floor(Math.random() * 40 + 60);
+      const maxNotFound = Math.floor(total * 0.25);
+      const notFound = Math.floor(Math.random() * (maxNotFound + 1));
+      return {
+        id,
+        customer,
+        date: formatDateFromId(id),
+        nonconformity: {
+          notFound,
+          total,
+        },
+      };
+    }),
+    scheduled: titles.slice(10, 15).map(({ id, customer }) => ({
+      id,
+      customer,
+      date: formatDateFromId(id),
+    })),
+  };
+};
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('pending');
@@ -72,11 +124,25 @@ export default function Dashboard() {
     scheduled: [],
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredTitles, setFilteredTitles] = useState<string[]>([]);
+  const [filteredTitles, setFilteredTitles] = useState<ReportTitle[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [alerts, setAlerts] = useState([
+    {
+      id: 1,
+      message: 'Pending audit with MedEquip Solutions due in a week.',
+      type: 'warning',
+    },
+    {
+      id: 2,
+      message: 'Scheduled audit from ABC Inc due in a week, not started.',
+      type: 'warning',
+    },
+  ]);
+
+  const reportTitles = generateReportTitles();
 
   useEffect(() => {
-    setAuditData(generateRandomAudits());
+    setAuditData(generateRandomAudits(reportTitles));
   }, []);
 
   useEffect(() => {
@@ -87,8 +153,10 @@ export default function Dashboard() {
 
     setIsSearching(true);
     const delay = setTimeout(() => {
-      const filtered = reportTitles.filter((title) =>
-        title.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = reportTitles.filter(
+        (item) =>
+          item.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.id.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredTitles(filtered);
       setIsSearching(false);
@@ -124,12 +192,12 @@ export default function Dashboard() {
           ) : (
             filteredTitles.length > 0 && (
               <div className='absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-sm shadow-md z-10'>
-                {filteredTitles.map((title, idx) => (
+                {filteredTitles.map((item, idx) => (
                   <div
                     key={idx}
                     className='px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 cursor-pointer'
                   >
-                    {title}
+                    {item.id} — {item.customer}
                   </div>
                 ))}
               </div>
@@ -157,60 +225,83 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Tab Content */}
-        <div className='space-y-6'>
-          {auditData[activeTab]?.map((item, idx) => {
-            const nc = item.nonconformity;
-            const notFound = nc?.notFound || 0;
-            const total = nc?.total || 0;
-            const percentage = total > 0 ? (notFound / total) * 100 : 0;
-            const barColor =
-              percentage <= 25
-                ? '#22c55e'
-                : percentage <= 50
-                ? '#F97316'
-                : '#DC2626';
-
-            return (
-              <div
-                key={idx}
-                className='flex items-center justify-between py-4 border-b border-gray-200'
-              >
-                <div className='flex-1'>
-                  <p
-                    className={`text-md font-medium ${
-                      activeTab === 'scheduled'
-                        ? idx === 0
-                          ? 'text-red-600'
-                          : idx === 1
-                          ? 'text-orange-500'
-                          : 'text-gray-800'
-                        : 'text-gray-800'
-                    }`}
-                  >
-                    {item.title}
-                  </p>
-                  <p className='text-sm text-gray-500'>{item.date}</p>
-                </div>
-                {nc ? (
-                  <div className='w-1/2'>
-                    <NonconformityProgress
-                      notFoundCount={notFound}
-                      totalCount={total}
-                      barColor={barColor}
-                    />
-                  </div>
-                ) : (
-                  <div className='w-1/2 flex items-end '>
-                    <button className='bg-gray-800 text-white text-sm px-4 py-2 rounded-sm hover:bg-gray-700 transition m-[20px]'>
-                      Start Audit
-                    </button>
-                  </div>
+        {/* Table */}
+        <div className='overflow-x-auto'>
+          <table className='min-w-full text-sm text-left text-gray-800'>
+            <thead className='border-b border-gray-300'>
+              <tr>
+                <th className='py-2 pr-4 font-semibold'>Audit ID</th>
+                <th className='py-2 pr-4 font-semibold'>Requesting Entity</th>
+                <th className='py-2 pr-4 font-semibold'>Requested Date</th>
+                {activeTab !== 'scheduled' && (
+                  <th className='py-2 font-medium'>Nonconformities</th>
                 )}
-              </div>
-            );
-          })}
+              </tr>
+            </thead>
+            <tbody>
+              {auditData[activeTab]?.map((item, idx) => {
+                const nc = item.nonconformity;
+                const notFound = nc?.notFound || 0;
+                const total = nc?.total || 0;
+                const percentage = total > 0 ? (notFound / total) * 100 : 0;
+                const barColor =
+                  percentage <= 25
+                    ? '#22c55e'
+                    : percentage <= 50
+                    ? '#F97316'
+                    : '#DC2626';
+
+                return (
+                  <tr key={idx} className='border-b border-gray-100'>
+                    <td className={'py-4 pr-4'}>
+                      <a
+                        href='#'
+                        onClick={(e) => e.preventDefault()} // prevents navigation
+                        className={` hover:underline ${
+                          activeTab === 'scheduled' && idx === 0
+                            ? 'text-red-600 font-medium'
+                            : activeTab === 'scheduled' && idx === 1
+                            ? 'text-orange-500 font-medium'
+                            : 'text-blue-600'
+                        }`}
+                      >
+                        {item.id}
+                      </a>
+                    </td>
+                    <td className='py-4 pr-4'>{item.customer}</td>
+                    <td className='py-4 pr-4'>{item.date}</td>
+                    <td className='py-4'>
+                      {nc ? (
+                        <NonconformityProgress
+                          notFoundCount={notFound}
+                          totalCount={total}
+                          barColor={barColor}
+                        />
+                      ) : (
+                        <button className='bg-gray-800 text-white text-sm px-4 py-2 rounded-sm hover:bg-gray-700 transition'>
+                          Start Audit
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
+      </div>
+
+      <div className='fixed bottom-6 right-6 z-50 flex flex-col gap-4'>
+        {alerts.map((alert) => (
+          <AlertPopover
+            key={alert.id}
+            message={alert.message}
+            type={alert.type as 'success' | 'warning'}
+            onClose={() =>
+              setAlerts((prev) => prev.filter((a) => a.id !== alert.id))
+            }
+          />
+        ))}
       </div>
     </div>
   );

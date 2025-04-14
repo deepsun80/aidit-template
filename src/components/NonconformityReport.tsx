@@ -89,7 +89,7 @@ export default function NonconformityReport({
           onClick={onBack}
           className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
         >
-          Back to Responses
+          View Audit
         </button>
       </div>
 

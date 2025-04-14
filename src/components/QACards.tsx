@@ -137,7 +137,7 @@ export default function QACards({
             className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
             disabled={notFoundCount <= 0}
           >
-            View Audit
+            Nonconformity Report
           </button>
         </div>
         <div className='flex items-center gap-4'>
@@ -147,7 +147,7 @@ export default function QACards({
                 htmlFor='toggle-not-found'
                 className='text-gray-700 text-sm'
               >
-                View Nonconformity
+                Filter Nonconformities
               </label>
               <div className='relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in'>
                 <input
