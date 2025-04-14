@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/NonconformityProgress';
 import AlertPopover from '@/components/AlertPopover';
+import AnalyticsTab from '@/components/AnalyticsTab';
 
-type Tab = 'pending' | 'recent' | 'scheduled';
+type Tab = 'pending' | 'recent' | 'scheduled' | 'analytics';
 
 interface ReportTitle {
   id: string;
@@ -60,9 +61,8 @@ const formatDateFromId = (id: string): string => {
   return `${mm}/${dd}/${yyyy}`;
 };
 
-export const generateReportTitles = (): ReportTitle[] => {
+const generateReportTitles = (): ReportTitle[] => {
   const titles: ReportTitle[] = [];
-
   for (let i = 0; i < 15; i++) {
     const dateCode = randomDates2025[i % randomDates2025.length];
     const customer = customers[i % customers.length];
@@ -77,13 +77,12 @@ export const generateReportTitles = (): ReportTitle[] => {
       customer,
     });
   }
-
   return titles;
 };
 
-export const generateRandomAudits = (
+const generateRandomAudits = (
   titles: ReportTitle[]
-): Record<Tab, AuditItem[]> => {
+): Record<Exclude<Tab, 'analytics'>, AuditItem[]> => {
   return {
     pending: titles.slice(0, 5).map(({ id, customer }) => ({
       id,
@@ -102,10 +101,7 @@ export const generateRandomAudits = (
         id,
         customer,
         date: formatDateFromId(id),
-        nonconformity: {
-          notFound,
-          total,
-        },
+        nonconformity: { notFound, total },
       };
     }),
     scheduled: titles.slice(10, 15).map(({ id, customer }) => ({
@@ -118,7 +114,9 @@ export const generateRandomAudits = (
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('pending');
-  const [auditData, setAuditData] = useState<Record<Tab, AuditItem[]>>({
+  const [auditData, setAuditData] = useState<
+    Record<Exclude<Tab, 'analytics'>, AuditItem[]>
+  >({
     pending: [],
     recent: [],
     scheduled: [],
@@ -169,11 +167,12 @@ export default function Dashboard() {
     pending: 'Pending Audits',
     recent: 'Recent Reports',
     scheduled: 'Scheduled Audits',
+    analytics: 'Analytics',
   };
 
   return (
     <div className='text-gray-900'>
-      {/* Search bar */}
+      {/* Search */}
       <div className='flex justify-end mb-6 relative'>
         <div className='relative w-full max-w-sm'>
           <input
@@ -184,7 +183,6 @@ export default function Dashboard() {
             className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-sm focus:outline-gray-400'
           />
           <MagnifyingGlassIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5' />
-
           {isSearching ? (
             <div className='absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-sm shadow-md z-10 flex items-center justify-center py-4'>
               <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
@@ -206,9 +204,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Tab Wrapper */}
+      {/* Wrapper */}
       <div className='bg-white rounded-sm shadow-sm border border-gray-200 p-6'>
-        {/* Tabs */}
         <div className='flex gap-6 border-b border-gray-200 mb-6'>
           {Object.entries(tabLabels).map(([key, label]) => (
             <button
@@ -225,72 +222,77 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Table */}
-        <div className='overflow-x-auto'>
-          <table className='min-w-full text-sm text-left text-gray-800'>
-            <thead className='border-b border-gray-300'>
-              <tr>
-                <th className='py-2 pr-4 font-semibold'>Audit ID</th>
-                <th className='py-2 pr-4 font-semibold'>Requesting Entity</th>
-                <th className='py-2 pr-4 font-semibold'>Requested Date</th>
-                {activeTab !== 'scheduled' && (
-                  <th className='py-2 font-medium'>Nonconformities</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {auditData[activeTab]?.map((item, idx) => {
-                const nc = item.nonconformity;
-                const notFound = nc?.notFound || 0;
-                const total = nc?.total || 0;
-                const percentage = total > 0 ? (notFound / total) * 100 : 0;
-                const barColor =
-                  percentage <= 25
-                    ? '#22c55e'
-                    : percentage <= 50
-                    ? '#F97316'
-                    : '#DC2626';
+        {/* Analytics tab */}
+        {activeTab === 'analytics' ? (
+          <AnalyticsTab />
+        ) : (
+          <div className='overflow-x-auto'>
+            <table className='min-w-full text-sm text-left text-gray-800'>
+              <thead className='border-b border-gray-300'>
+                <tr>
+                  <th className='py-2 pr-4 font-semibold'>Audit ID</th>
+                  <th className='py-2 pr-4 font-semibold'>Requesting Entity</th>
+                  <th className='py-2 pr-4 font-semibold'>Requested Date</th>
+                  {activeTab !== 'scheduled' && (
+                    <th className='py-2 font-medium'>Nonconformities</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {auditData[activeTab]?.map((item, idx) => {
+                  const nc = item.nonconformity;
+                  const notFound = nc?.notFound || 0;
+                  const total = nc?.total || 0;
+                  const percentage = total > 0 ? (notFound / total) * 100 : 0;
+                  const barColor =
+                    percentage <= 25
+                      ? '#22c55e'
+                      : percentage <= 50
+                      ? '#F97316'
+                      : '#DC2626';
 
-                return (
-                  <tr key={idx} className='border-b border-gray-100'>
-                    <td className={'py-4 pr-4'}>
-                      <a
-                        href='#'
-                        onClick={(e) => e.preventDefault()} // prevents navigation
-                        className={` hover:underline ${
-                          activeTab === 'scheduled' && idx === 0
-                            ? 'text-red-600 font-medium'
-                            : activeTab === 'scheduled' && idx === 1
-                            ? 'text-orange-500 font-medium'
-                            : 'text-blue-600'
-                        }`}
-                      >
-                        {item.id}
-                      </a>
-                    </td>
-                    <td className='py-4 pr-4'>{item.customer}</td>
-                    <td className='py-4 pr-4'>{item.date}</td>
-                    <td className='py-4'>
-                      {nc ? (
-                        <NonconformityProgress
-                          notFoundCount={notFound}
-                          totalCount={total}
-                          barColor={barColor}
-                        />
-                      ) : (
-                        <button className='bg-gray-800 text-white text-sm px-4 py-2 rounded-sm hover:bg-gray-700 transition'>
-                          Start Audit
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  return (
+                    <tr key={idx} className='border-b border-gray-100'>
+                      <td className='py-4 pr-4'>
+                        <a
+                          href='#'
+                          onClick={(e) => e.preventDefault()}
+                          className={`hover:underline ${
+                            activeTab === 'scheduled' && idx === 0
+                              ? 'text-red-600 font-medium'
+                              : activeTab === 'scheduled' && idx === 1
+                              ? 'text-orange-500 font-medium'
+                              : 'text-blue-600'
+                          }`}
+                        >
+                          {item.id}
+                        </a>
+                      </td>
+                      <td className='py-4 pr-4'>{item.customer}</td>
+                      <td className='py-4 pr-4'>{item.date}</td>
+                      <td className='py-4 align-middle'>
+                        {nc ? (
+                          <NonconformityProgress
+                            notFoundCount={notFound}
+                            totalCount={total}
+                            barColor={barColor}
+                          />
+                        ) : (
+                          <button className='bg-gray-800 text-white text-sm px-4 py-2 rounded-sm hover:bg-gray-700 transition'>
+                            Start Audit
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
+      {/* Alerts */}
       <div className='fixed bottom-6 right-6 z-50 flex flex-col gap-4'>
         {alerts.map((alert) => (
           <AlertPopover
