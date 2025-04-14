@@ -11,7 +11,9 @@ export default function WelcomeScreen({
   onViewQuestions,
 }: {
   report: {
-    title?: string;
+    auditId?: string;
+    customer?: string;
+    date?: string;
     questions: QAQuestion[] | null;
     qaList: QA[];
   } | null;
@@ -52,10 +54,17 @@ export default function WelcomeScreen({
       {/* If report exists and there are no responses */}
       {hasReport && !hasResponses && (
         <>
-          <p className='text-4xl text-center text-gray-900 mb-8 mt-4'>
-            Audit:{' '}
-            <span className='font-bold'>{report?.title || 'Untitled'}</span>
-          </p>
+          <div className='text-center text-gray-900 mb-8 mt-4'>
+            <p className='text-lg font-bold'>Audit ID: {report.auditId}</p>
+            <p className='text-sm text-gray-700'>
+              Requesting Entity:{' '}
+              <span className='font-semibold'>{report.customer}</span>
+            </p>
+            <p className='text-sm text-gray-700'>
+              Requested Date:{' '}
+              <span className='font-semibold'>{report.date}</span>
+            </p>
+          </div>
           <p>
             There are no <span className='font-bold'>stored responses</span> in
             this audit.

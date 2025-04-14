@@ -15,6 +15,7 @@ import {
   EyeOpenIcon,
 } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/NonconformityProgress';
+import { QAReport } from '@/context/QAContext';
 
 interface QACardsProps {
   qaList: { question: string; answer: string }[];
@@ -25,7 +26,7 @@ interface QACardsProps {
   setShowOnlyNotFound: (val: boolean) => void;
   onDownload: () => void;
   onViewReport: () => void;
-  reportTitle: string;
+  report: QAReport;
   onAskNew: () => void;
   onUploadNew: () => void;
   onViewUploaded: () => void;
@@ -41,7 +42,7 @@ export default function QACards({
   setShowOnlyNotFound,
   onDownload,
   onViewReport,
-  reportTitle,
+  report,
   onAskNew,
   onUploadNew,
   onViewUploaded,
@@ -95,7 +96,18 @@ export default function QACards({
     <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
       {/* Header Section */}
       <div className='flex justify-between items-center mb-4'>
-        <p className='text-lg font-semibold'>Audit: {reportTitle}</p>
+        <div>
+          <p className='text-lg font-semibold text-gray-900'>
+            Audit ID: {report.auditId}
+          </p>
+          <p className='text-sm text-gray-700'>
+            Requesting Entity:{' '}
+            <span className='font-semibold'>{report.customer}</span>
+          </p>
+          <p className='text-sm text-gray-700'>
+            Requested Date: <span className='font-semibold'>{report.date}</span>
+          </p>
+        </div>
         <div className='flex gap-2'>
           <button
             onClick={onAskNew}

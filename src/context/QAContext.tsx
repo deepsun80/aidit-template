@@ -9,8 +9,10 @@ export type QA = {
 
 export type QAQuestion = { question: string; reference?: string };
 
-type QAReport = {
-  title: string;
+export type QAReport = {
+  auditId: string;
+  customer: string;
+  date: string;
   questions: QAQuestion[] | null;
   selectedQuestions: string[];
   qaList: QA[];

@@ -9,21 +9,26 @@ interface QAItem {
 }
 
 interface ReportData {
-  [section: string]: { [reference: string]: number[] }; // store question numbers instead of counts
+  [section: string]: { [reference: string]: number[] };
 }
 
 interface NonconformityReportProps {
   qaList: QAItem[];
   onBack: () => void;
   notFoundCount: number;
+  auditId: string;
+  customer: string;
+  date: string;
 }
 
 export default function NonconformityReport({
   qaList,
   onBack,
   notFoundCount,
+  auditId,
+  customer,
+  date,
 }: NonconformityReportProps) {
-  // Filter for "Found in Context: false"
   const notFoundItems = qaList
     .map((qa, index) => ({ ...qa, index }))
     .filter((qa) =>
@@ -36,7 +41,7 @@ export default function NonconformityReport({
     const [, referenceText] = question.split(' - ');
     if (!referenceText) return;
 
-    const references = referenceText.split(/,\s*/); // handle multiple refs
+    const references = referenceText.split(/,\s*/);
 
     references.forEach((ref) => {
       const match = ref.match(/^(ISO|CFR|[\w\-\.§]+)/i);
@@ -45,11 +50,10 @@ export default function NonconformityReport({
       if (!referenceMap[section]) referenceMap[section] = {};
       if (!referenceMap[section][ref]) referenceMap[section][ref] = [];
 
-      referenceMap[section][ref].push(index + 1); // Use 1-based index
+      referenceMap[section][ref].push(index + 1);
     });
   });
 
-  /** Responses Not Found color calculation */
   const totalCount = qaList.length;
   const notFoundPercentage =
     totalCount > 0 ? (notFoundCount / totalCount) * 100 : 0;
@@ -61,24 +65,30 @@ export default function NonconformityReport({
       ? '#F97316'
       : '#DC2626';
 
-  /** Scroll to the clicked qaList item */
   const handleClickScrollTo = (qaNumber: number) => {
     onBack();
-
-    // Wait for QACards to render, then scroll
     setTimeout(() => {
       const element = document.getElementById(`qa-${qaNumber}`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 100); // 100ms should be enough for the UI transition
+    }, 100);
   };
 
   return (
-    <div className='max-w-4xl mx-auto flex flex-col gap-4 mt-2'>
-      <h2 className='text-lg font-semibold text-gray-900 mb-6'>
-        Nonconformity Breakdown by Standard Reference
-      </h2>
+    <div className='max-w-4xl mx-auto flex flex-col gap-4 mt-2 text-gray-900'>
+      {/* Header Info */}
+      <div className='mb-4'>
+        <p className='text-lg font-semibold'>Audit ID: {auditId}</p>
+        <p className='text-sm text-gray-700'>
+          Requesting Entity: <span className='font-semibold'>{customer}</span>
+        </p>
+        <p className='text-sm text-gray-700'>
+          Requested Date: <span className='font-semibold'>{date}</span>
+        </p>
+      </div>
+
+      {/* Progress and Back Button */}
       <div className='flex items-center gap-4'>
         <NonconformityProgress
           notFoundCount={notFoundCount}
@@ -93,7 +103,13 @@ export default function NonconformityReport({
         </button>
       </div>
 
-      <div className='bg-white shadow-md rounded-sm p-6'>
+      {/* Subheading */}
+      <p className='text-sm text-gray-600 mt-2 font-semibold'>
+        Nonconformity Responses by Standard Reference
+      </p>
+
+      {/* Breakdown List */}
+      <div className='bg-white border border-gray-300 rounded-sm p-6'>
         {Object.keys(referenceMap).length === 0 ? (
           <p className='text-gray-600'>
             No Standard Reference Nonconformities Found.

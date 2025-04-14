@@ -154,13 +154,24 @@ export default function AuditManagement() {
   };
 
   const handleDownloadPDF = () => {
-    if (!qaList || qaList.length === 0) return;
+    if (!qaList || qaList.length === 0 || !report) return;
 
     const doc = new jsPDF();
     const margin = 10;
     const maxWidth = 180;
     let y = margin;
 
+    // === Add Audit Metadata Header ===
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text(`Audit ID: ${report.auditId}`, margin, y);
+    y += 8;
+    doc.text(`Requesting Entity: ${report.customer}`, margin, y);
+    y += 8;
+    doc.text(`Requested Date: ${report.date}`, margin, y);
+    y += 8; // add some extra space before Q/A items
+
+    // === Loop through Q/A items ===
     qaList.forEach((qa, index) => {
       const [rawQuestion, rawReference] = qa.question.split(' - ');
       const questionText = `${index + 1}: ${rawQuestion.trim()}`;
@@ -185,39 +196,49 @@ export default function AuditManagement() {
       const wrappedCitation = citationLine
         ? doc.splitTextToSize(citationLine, maxWidth)
         : [];
+
       const requiredHeight =
+        6 + // space for divider + gap below
         wrappedQuestion.length * 6 +
         (referenceText ? wrappedReference.length * 6 + 2 : 0) +
         wrappedAnswer.length * 6 +
         (citationLine ? wrappedCitation.length * 6 + 2 : 0) +
-        8;
+        2; // bottom spacing
 
       if (y + requiredHeight > 280) {
         doc.addPage();
         y = margin;
       }
 
+      // Divider line
+      doc.setDrawColor(200);
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, 200, y);
+      y += 8; // ↑ add space after divider, before question
+
+      // Question
       doc.setFont('helvetica', 'bold');
       doc.text(wrappedQuestion, margin, y);
       y += wrappedQuestion.length * 6;
 
+      // Reference
       if (referenceText) {
         doc.setFont('helvetica', 'italic');
         doc.text(wrappedReference, margin, y);
-        y += wrappedReference.length * 6 + 2;
+        y += wrappedReference.length * 6 + 1;
       }
 
+      // Answer
       doc.setFont('helvetica', 'normal');
       doc.text(wrappedAnswer, margin, y);
       y += wrappedAnswer.length * 6;
 
+      // Citation
       if (citationLine) {
         doc.setFont('helvetica', 'italic');
         doc.text(wrappedCitation, margin, y);
-        y += wrappedCitation.length * 6 + 2;
+        y += wrappedCitation.length * 6;
       }
-
-      y += 6;
     });
 
     doc.save('audit_responses.pdf');
@@ -309,6 +330,9 @@ export default function AuditManagement() {
             qaList={qaList}
             notFoundCount={notFoundCount || 0}
             onBack={() => setShowNonconformityReport(false)}
+            auditId={report?.auditId || 'N/A'}
+            customer={report?.customer || 'N/A'}
+            date={report?.date || 'N/A'}
           />
         ) : (
           <QACards
@@ -320,7 +344,7 @@ export default function AuditManagement() {
             setShowOnlyNotFound={setShowOnlyNotFound}
             onDownload={handleDownloadPDF}
             onViewReport={() => setShowNonconformityReport(true)}
-            reportTitle={report?.title || 'Untitled'}
+            report={report!}
             onAskNew={() => setShowChat(true)}
             onUploadNew={() => fileInputRef.current?.click()}
             onViewUploaded={() => setShowQuestionSelector(true)}
