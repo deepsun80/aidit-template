@@ -17,8 +17,8 @@ export default function Sidebar({
   setActivePage,
   activePage,
 }: {
-  setActivePage: (page: 'dashboard' | 'audit') => void;
-  activePage: 'dashboard' | 'audit';
+  setActivePage: (page: 'dashboard' | 'audit' | 'supplier') => void;
+  activePage: 'dashboard' | 'audit' | 'supplier';
 }) {
   return (
     <aside className='w-72 bg-gray-800 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
@@ -82,14 +82,20 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Disabled Items */}
+        {/* Supplier Audits */}
         <button
-          disabled
-          className='flex items-center gap-2 px-4 py-2 rounded-sm text-gray-500 cursor-not-allowed'
+          onClick={() => setActivePage('supplier')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
+            activePage === 'supplier'
+              ? 'bg-gray-700 text-white'
+              : 'text-gray-300 hover:text-white'
+          }`}
         >
           <ArchiveIcon className='w-6 h-6 text-inherit' />
           <span>Supplier Audits</span>
         </button>
+
+        {/* Disabled Items */}
         <button
           disabled
           className='flex items-center gap-2 px-4 py-2 rounded-sm text-gray-500 cursor-not-allowed'

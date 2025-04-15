@@ -5,14 +5,15 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/SideBar';
 import AuditManagement from '@/pages/AuditManagement';
 import Dashboard from '@/pages/Dashboard';
+import SupplierAudit from '@/pages/SupplierAudit';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const [activePage, setActivePage] = useState<'dashboard' | 'audit'>(
-    'dashboard'
-  );
+  const [activePage, setActivePage] = useState<
+    'dashboard' | 'audit' | 'supplier'
+  >('dashboard');
 
   if (status === 'loading') {
     return <p className='text-center text-lg font-medium'>Loading...</p>;
@@ -47,7 +48,9 @@ export default function Home() {
       <div className='flex flex-col flex-1'>
         <Header />
         <main className='flex-1 p-8'>
-          {activePage === 'dashboard' ? <Dashboard /> : <AuditManagement />}
+          {activePage === 'dashboard' && <Dashboard />}
+          {activePage === 'audit' && <AuditManagement />}
+          {activePage === 'supplier' && <SupplierAudit />}
         </main>
       </div>
     </div>
