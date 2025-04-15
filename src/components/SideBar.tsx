@@ -67,7 +67,7 @@ export default function Sidebar({
           <div className='ml-8 mt-4 flex flex-col gap-4'>
             <button
               disabled
-              className='flex items-center gap-2 px-3 py-1 rounded-sm text-sm text-gray-500 cursor-not-allowed'
+              className='flex items-center gap-2 px-3 py-1 rounded-sm text-sm text-gray-300 cursor-not-allowed'
             >
               <FilePlusIcon className='w-4 h-4 text-inherit' />
               <span>Create</span>
