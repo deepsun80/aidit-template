@@ -97,7 +97,7 @@ export default function QuestionSelector({
   };
 
   return (
-    <div className='max-w-4xl mx-auto text-gray-900 flex flex-col gap-4 mt-2'>
+    <div className='max-w-4xl mx-auto text-gray-900 flex flex-col gap-4'>
       <p className='font-semibold text-lg'>Uploaded File Questions</p>
       <div className='bg-white rounded-sm border border-gray-300 p-6'>
         {/* Sticky Header */}
@@ -245,7 +245,7 @@ export default function QuestionSelector({
         </div>
 
         {/* Footer */}
-        <div className='sticky bottom-0 left-0 right-0 mt-2 bg-white border-t border-gray-200 pb-2 pt-8 flex justify-between z-10'>
+        <div className='sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-2 pt-8 flex justify-between z-10'>
           <button
             onClick={onCancel}
             className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600'

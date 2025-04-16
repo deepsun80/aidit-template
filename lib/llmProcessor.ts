@@ -14,6 +14,7 @@ export async function extractAuditQuestions(
   Instructions:
   - Extract all complete audit-related questions from the **Audit Topic** column.
   - For each question, also extract the **Standard Reference** from the same row (usually ISO or CFR numbers).
+  - If a question does not have a **Standard Reference**, include the question without any standard reference on the item.
   - If a row has multiple complete questions, include each question with the same reference.
   - Do NOT include broken phrases like "Procedure?" or "Available?" unless part of a full sentence.
   - Format the output as a JSON array of objects with \`question\` and \`reference\` fields. Example:

@@ -76,7 +76,7 @@ export default function NonconformityReport({
   };
 
   return (
-    <div className='max-w-4xl mx-auto flex flex-col gap-4 mt-2 text-gray-900'>
+    <div className='max-w-4xl mx-auto flex flex-col gap-4 text-gray-900'>
       {/* Header Info */}
       <div className='mb-4'>
         <p className='text-lg font-semibold'>Audit ID: {auditId}</p>

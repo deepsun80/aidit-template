@@ -93,7 +93,7 @@ export default function QACards({
   }, [qaList]);
 
   return (
-    <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4 mt-2'>
+    <div className='max-w-4xl mx-auto flex flex-col text-gray-900 gap-4'>
       {/* Header Section */}
       <div className='flex justify-between items-center mb-4'>
         <div>
