@@ -13,7 +13,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [activePage, setActivePage] = useState<
     'dashboard' | 'audit' | 'supplier'
-  >('dashboard');
+  >('audit');
 
   if (status === 'loading') {
     return <p className='text-center text-lg font-medium'>Loading...</p>;

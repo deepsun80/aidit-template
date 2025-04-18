@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ChatPrompt from '@/components/ChatPrompt';
 import QuestionSelector from '@/components/QuestionSelector';
 import QACards from '@/components/QACards';
@@ -15,18 +15,18 @@ export default function AuditManagement() {
   const { report, setReport, updateReport } = useQA();
   const { showError } = useGlobalError();
 
+  const [hasMounted, setHasMounted] = useState(false); // For Next.js hydration mismatch or flicker fix
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showChat, setShowChat] = useState(false);
-  const [showQuestionSelector, setShowQuestionSelector] = useState(false);
+  const [showQuestionSelector, setShowQuestionSelector] = useState(true);
   const [submissionProgress, setSubmissionProgress] = useState<number | null>(
     null
   );
   const [showCancel, setShowCancel] = useState(false);
   const [showOnlyNotFound, setShowOnlyNotFound] = useState(false);
   const [showNonconformityReport, setShowNonconformityReport] = useState(false);
-  const [createReport, setCreateReport] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cancelRequestedRef = useRef(false);
@@ -273,6 +273,21 @@ export default function AuditManagement() {
     }
   };
 
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return (
+      <div className='fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex flex-col items-center justify-center z-50'>
+        <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>
+        <span className='mt-2 text-gray-700 text-sm text-center px-4'>
+          Initializing...
+        </span>
+      </div>
+    );
+  }
+
   return (
     <>
       {(loading || uploading) && (
@@ -310,19 +325,19 @@ export default function AuditManagement() {
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
       />
 
-      {createReport ? (
-        <CreateReport
-          setReport={setReport}
-          onCancel={() => setCreateReport(false)}
-        />
+      {!report ? (
+        <CreateReport setReport={setReport} />
       ) : showQuestionSelector && questions ? (
         <QuestionSelector
           selectedFile={selectedFile?.name}
           questions={questions}
           setQuestions={(q) => updateReport({ questions: q })}
           onSelectionChange={(sq) => updateReport({ selectedQuestions: sq })}
-          onCancel={() => setShowQuestionSelector(false)}
+          onCancel={() => {
+            if (qaList.length > 0) setShowQuestionSelector(false);
+          }}
           onSubmit={handleSubmitQuestions}
+          disableCancel={qaList.length === 0}
         />
       ) : qaList.length > 0 ? (
         showNonconformityReport ? (
@@ -354,10 +369,8 @@ export default function AuditManagement() {
       ) : (
         <WelcomeScreen
           report={report}
-          onCreateReport={() => setCreateReport(true)}
           onOpenChat={() => setShowChat(true)}
           onUploadClick={() => fileInputRef.current?.click()}
-          onViewQuestions={() => setShowQuestionSelector(true)}
         />
       )}
 

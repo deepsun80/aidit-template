@@ -82,7 +82,7 @@ export default function SupplierList({
               <tr>
                 <th className='py-2 pr-4 font-semibold'>Supplier</th>
                 <th className='py-2 pr-4 font-semibold'>Date Added</th>
-                <th className='py-2 font-semibold'>Risk Analysis</th>
+                <th className='py-2 font-semibold'>Risk Level</th>
               </tr>
             </thead>
             <tbody>

@@ -11,6 +11,7 @@ interface QuestionSelectorProps {
   onSubmit: () => void;
   selectedFile?: string | null;
   setQuestions: (questions: { question: string; reference?: string }[]) => void;
+  disableCancel?: boolean;
 }
 
 export default function QuestionSelector({
@@ -20,6 +21,7 @@ export default function QuestionSelector({
   onCancel,
   onSubmit,
   selectedFile,
+  disableCancel = true,
 }: QuestionSelectorProps) {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -248,7 +250,8 @@ export default function QuestionSelector({
         <div className='sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-2 pt-8 flex justify-between z-10'>
           <button
             onClick={onCancel}
-            className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600'
+            className='px-4 py-2 bg-gray-500 text-white rounded-sm hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed'
+            disabled={disableCancel}
           >
             Cancel
           </button>

@@ -3,13 +3,7 @@
 
 import { useState } from 'react';
 
-export default function CreateReport({
-  setReport,
-  onCancel,
-}: {
-  setReport: any;
-  onCancel: () => void;
-}) {
+export default function CreateReport({ setReport }: { setReport: any }) {
   const [customer, setCustomer] = useState('');
   const [date, setDate] = useState('');
 
@@ -34,8 +28,6 @@ export default function CreateReport({
       selectedQuestions: [],
       selectedFile: null,
     });
-
-    onCancel();
   };
 
   return (
@@ -67,13 +59,7 @@ export default function CreateReport({
           className='w-full px-4 py-2 border border-gray-300 rounded-sm text-gray-900 focus:outline-gray-400 mb-12'
         />
 
-        <div className='flex justify-between'>
-          <button
-            onClick={onCancel}
-            className='px-4 py-2 text-gray-700 bg-gray-200 rounded-sm hover:bg-gray-300 transition'
-          >
-            Cancel
-          </button>
+        <div className='flex justify-end'>
           <button
             onClick={handleSubmit}
             className={`px-4 py-2 rounded-sm transition ${
