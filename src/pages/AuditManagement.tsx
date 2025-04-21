@@ -7,14 +7,24 @@ import QACards from '@/components/QACards';
 import NonconformityReport from '@/components/NonconformityReport';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import CreateReport from '@/components/CreateReport';
-import { useGlobalError } from '@/context/GlobalErrorContext';
-import { useQA } from '@/context/QAContext';
+import type { QAReport } from '@/types/qa';
 import jsPDF from 'jspdf';
 
-export default function AuditManagement() {
-  const { report, setReport, updateReport } = useQA();
-  const { showError } = useGlobalError();
+interface AuditManagementProps {
+  report: QAReport | null;
+  setReport: (report: QAReport | null) => void;
+  updateReport: (partial: Partial<QAReport>) => void;
+  deleteQuestions: () => void;
+  showError: (message: string) => void;
+}
 
+export default function AuditManagement({
+  report,
+  setReport,
+  updateReport,
+  deleteQuestions,
+  showError,
+}: AuditManagementProps) {
   const [hasMounted, setHasMounted] = useState(false); // For Next.js hydration mismatch or flicker fix
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -338,6 +348,7 @@ export default function AuditManagement() {
           }}
           onSubmit={handleSubmitQuestions}
           disableCancel={qaList.length === 0}
+          deleteQuestions={deleteQuestions}
         />
       ) : qaList.length > 0 ? (
         showNonconformityReport ? (

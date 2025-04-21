@@ -15,7 +15,7 @@ import {
   EyeOpenIcon,
 } from '@radix-ui/react-icons';
 import NonconformityProgress from '@/components/NonconformityProgress';
-import { QAReport } from '@/context/QAContext';
+import type { QAReport } from '@/types/qa';
 
 interface QACardsProps {
   qaList: { question: string; answer: string }[];

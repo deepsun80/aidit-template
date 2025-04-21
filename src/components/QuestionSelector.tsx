@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons';
-import { useQA } from '@/context/QAContext';
 
 interface QuestionSelectorProps {
   questions: { question: string; reference?: string }[];
@@ -11,6 +10,7 @@ interface QuestionSelectorProps {
   onSubmit: () => void;
   selectedFile?: string | null;
   setQuestions: (questions: { question: string; reference?: string }[]) => void;
+  deleteQuestions: () => void;
   disableCancel?: boolean;
 }
 
@@ -21,6 +21,7 @@ export default function QuestionSelector({
   onCancel,
   onSubmit,
   selectedFile,
+  deleteQuestions,
   disableCancel = true,
 }: QuestionSelectorProps) {
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
@@ -28,8 +29,6 @@ export default function QuestionSelector({
   const [editText, setEditText] = useState<string>('');
   const [showConfirmDeleteAll, setShowConfirmDeleteAll] =
     useState<boolean>(false);
-
-  const { deleteQuestions } = useQA();
 
   const toggleQuestionSelection = (fullQuestion: string) => {
     const updatedSelection = selectedQuestions.includes(fullQuestion)

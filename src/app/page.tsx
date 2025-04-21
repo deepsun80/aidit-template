@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/SideBar';
-import AuditManagement from '@/pages/AuditManagement';
 import Dashboard from '@/pages/Dashboard';
 import SupplierAudit from '@/pages/SupplierAudit';
+import AuditManagement from '@/pages/AuditManagement';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
+import GlobalError from '@/components/GlobalError';
+import type { QAReport } from '@/types/qa';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -15,6 +17,52 @@ export default function Home() {
     'dashboard' | 'audit' | 'supplier'
   >('audit');
 
+  // === Report state ===
+  const [report, setReport] = useState<QAReport | null>(null);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('qa-report');
+    if (stored) setReport(JSON.parse(stored));
+  }, []);
+
+  // Save to localStorage on change
+  useEffect(() => {
+    if (report) {
+      localStorage.setItem('qa-report', JSON.stringify(report));
+    } else {
+      localStorage.removeItem('qa-report');
+    }
+  }, [report]);
+
+  const updateReport = (partial: Partial<QAReport>) => {
+    setReport((prev) => (prev ? { ...prev, ...partial } : null));
+  };
+
+  const deleteQuestions = () => {
+    setReport((prev) =>
+      prev
+        ? {
+            ...prev,
+            questions: null,
+            selectedQuestions: [],
+            selectedFile: null,
+          }
+        : null
+    );
+  };
+
+  // === Global Error State ===
+  const [error, setError] = useState<string | null>(null);
+
+  const showError = (message: string) => {
+    setError(message);
+    setTimeout(() => setError(null), 5000); // auto-dismiss
+  };
+
+  const clearError = () => setError(null);
+
+  // === Auth ===
   if (status === 'loading') {
     return <p className='text-center text-lg font-medium'>Loading...</p>;
   }
@@ -49,9 +97,18 @@ export default function Home() {
         <Header />
         <main className='flex-1 p-8'>
           {activePage === 'dashboard' && <Dashboard />}
-          {activePage === 'audit' && <AuditManagement />}
+          {activePage === 'audit' && (
+            <AuditManagement
+              report={report}
+              setReport={setReport}
+              updateReport={updateReport}
+              deleteQuestions={deleteQuestions}
+              showError={showError}
+            />
+          )}
           {activePage === 'supplier' && <SupplierAudit />}
         </main>
+        {error && <GlobalError error={error} clearError={clearError} />}
       </div>
     </div>
   );

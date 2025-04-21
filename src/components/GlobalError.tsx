@@ -1,10 +1,11 @@
 'use client';
 
-import { useGlobalError } from '@/context/GlobalErrorContext';
+interface GlobalErrorProps {
+  error: string | null;
+  clearError: () => void;
+}
 
-export default function GlobalError() {
-  const { error, clearError } = useGlobalError();
-
+export default function GlobalError({ error, clearError }: GlobalErrorProps) {
   if (!error) return null;
 
   return (
