@@ -9,7 +9,7 @@ type Supplier = {
   risk: 'low' | 'medium' | 'high';
 };
 
-const allSuppliers: Supplier[] = [
+export const allSuppliers: Supplier[] = [
   { name: 'SterileTech Partners', date: '03/20/2025', risk: 'high' },
   { name: 'MedCore Devices', date: '07/22/2025', risk: 'high' },
   { name: 'SecureSeal Systems', date: '10/25/2025', risk: 'high' },
