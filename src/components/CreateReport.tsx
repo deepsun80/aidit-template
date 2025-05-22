@@ -35,7 +35,7 @@ export default function CreateReport({ setReport }: { setReport: any }) {
       <h2 className='text-2xl font-semibold mb-6 text-gray-900'>
         Create Audit
       </h2>
-      <div className='bg-white p-6 rounded border border-gray-300'>
+      <div className='bg-white p-6 rounded-md border border-gray-300'>
         {/* Requesting Entity */}
         <label className='block mb-2 text-sm font-medium text-gray-700'>
           Requesting Entity:

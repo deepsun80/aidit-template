@@ -205,7 +205,7 @@ export default function Dashboard() {
       </div>
 
       {/* Wrapper */}
-      <div className='bg-white rounded-sm shadow-sm border border-gray-300 p-6'>
+      <div className='bg-white rounded-md shadow-sm border border-gray-300 p-6'>
         <div className='flex gap-6 border-b border-gray-200 mb-6'>
           {Object.entries(tabLabels).map(([key, label]) => (
             <button

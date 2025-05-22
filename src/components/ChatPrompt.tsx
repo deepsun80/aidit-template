@@ -14,7 +14,7 @@ export default function ChatPrompt({
   onCancel,
 }: ChatPromptProps) {
   return (
-    <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 w-full bg-white border border-gray-300 p-4 z-30 max-w-4xl shadow-md'>
+    <div className='fixed bottom-8 left-1/2 transform -translate-x-1/2 w-full rounded-md bg-white border border-gray-300 p-4 z-30 max-w-4xl shadow-md'>
       {/* Text Area */}
       <textarea
         className='w-full p-4 border border-gray-300 rounded-sm focus:outline-gray-400 bg-white text-gray-900'

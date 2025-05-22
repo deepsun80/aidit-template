@@ -77,7 +77,7 @@ export default function SupplierAssessmentView({
       </div>
 
       {/* History Table */}
-      <div className='bg-white rounded-sm border border-gray-300 p-6'>
+      <div className='bg-white rounded-md border border-gray-300 p-6'>
         <div className='flex justify-between items-center mb-4'>
           <h3 className='text-md font-semibold text-gray-900'>
             Assessment History

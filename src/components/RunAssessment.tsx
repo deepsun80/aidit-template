@@ -106,7 +106,7 @@ export default function RunAssessment({
         Supplier: <span className='font-bold'>{supplier.name}</span>
       </p>
 
-      <div className='bg-white rounded-sm border border-gray-300 p-6 relative'>
+      <div className='bg-white rounded-md border border-gray-300 p-6 relative'>
         {loadingIndex !== null && (
           <div className='absolute inset-0 bg-white bg-opacity-90 z-10 flex flex-col items-center justify-center'>
             <div className='w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin'></div>

@@ -203,7 +203,7 @@ export default function QACards({
           <div
             key={index}
             id={`qa-${index + 1}`}
-            className={`p-6 bg-white rounded-sm border ${
+            className={`p-6 bg-white rounded-md border ${
               isNotFound ? 'border-red-500' : 'border-gray-300'
             } relative`}
           >

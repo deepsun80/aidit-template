@@ -33,7 +33,7 @@ export default function WelcomeScreen({
       </div>
 
       {/* Body Section - Welcome Text & Buttons */}
-      <div className='bg-white text-center rounded-sm border border-gray-300 p-6 mt-4'>
+      <div className='bg-white text-center rounded-md border border-gray-300 p-6 mt-4'>
         <p className='text-lg mb-2'>
           There are no <span className='font-bold'>stored responses</span> in
           this audit.

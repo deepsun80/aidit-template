@@ -29,7 +29,7 @@ export default function AlertPopover({
   }, [duration, onClose]);
 
   return (
-    <div className='bg-white border border-gray-300 rounded-sm shadow-md px-4 py-3 flex items-start gap-3 min-w-[320px] max-w-sm'>
+    <div className='bg-white border border-gray-300 rounded-md shadow-md px-4 py-3 flex items-start gap-3 min-w-[320px] max-w-sm'>
       <span
         className={`w-6 h-6 rounded-full flex items-center justify-center ${
           type === 'success' ? 'bg-green-500' : 'bg-red-500'
