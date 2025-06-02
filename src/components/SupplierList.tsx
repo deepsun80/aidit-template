@@ -67,7 +67,7 @@ export default function SupplierList({
 
         {/* Add Supplier button */}
         <button
-          className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+          className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
           title='Add Supplier'
         >
           <PlusIcon className='text-white w-5 h-5' />

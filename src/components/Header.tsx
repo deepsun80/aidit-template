@@ -31,17 +31,17 @@ export default function Header() {
       <div ref={dropdownRef} className='relative'>
         <button
           onClick={() => setShowDropdown((prev) => !prev)}
-          className='w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700 transition'
+          className='w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-gray-600 transition'
           title='Menu'
         >
           <HamburgerMenuIcon className='w-5 h-5' />
         </button>
 
         {showDropdown && (
-          <div className='absolute border border-gray-300 rounded-md right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-sm'>
+          <div className='absolute border border-gray-300 rounded-md right-0 mt-2 w-48 bg-white text-gray-700 shadow-lg rounded-sm'>
             <button
               title='Help'
-              className='w-full flex rounded-t-md items-center gap-2 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white'
+              className='w-full flex rounded-t-md items-center gap-2 px-4 py-2 text-sm hover:bg-gray-700 hover:text-white'
             >
               <QuestionMarkCircledIcon className='w-4 h-4' />
               Help
@@ -49,7 +49,7 @@ export default function Header() {
             <button
               onClick={() => signOut()}
               title='Sign Out'
-              className='w-full flex rounded-b-md items-center gap-2 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white'
+              className='w-full flex rounded-b-md items-center gap-2 px-4 py-2 text-sm hover:bg-gray-700 hover:text-white'
             >
               <PersonIcon className='w-4 h-4' />
               Sign Out

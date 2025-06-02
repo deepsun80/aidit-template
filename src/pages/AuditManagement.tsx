@@ -318,7 +318,7 @@ export default function AuditManagement({
                 cancelRequestedRef.current = true;
                 setShowCancel(true);
               }}
-              className='mt-4 px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition'
+              className='mt-4 px-4 py-2 bg-gray-900 text-white rounded-sm hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition'
               disabled={showCancel}
             >
               Cancel

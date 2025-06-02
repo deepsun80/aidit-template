@@ -5,12 +5,10 @@ import {
   FileTextIcon,
   ArchiveIcon,
   LayersIcon,
-  ExitIcon,
   FilePlusIcon,
   EnvelopeOpenIcon,
   CaretUpIcon,
 } from '@radix-ui/react-icons';
-import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 
 export default function Sidebar({
@@ -21,13 +19,13 @@ export default function Sidebar({
   activePage: 'dashboard' | 'audit' | 'supplier';
 }) {
   return (
-    <aside className='w-72 bg-gray-800 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
+    <aside className='w-70 bg-gray-600 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
       {/* Logo */}
       <div className='flex items-center'>
         <Image
           src='/AiDit-logo-v1.jpg'
           alt='AiDit Logo'
-          width={220}
+          width={180}
           height={80}
         />
       </div>
@@ -39,7 +37,7 @@ export default function Sidebar({
           onClick={() => setActivePage('dashboard')}
           className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
             activePage === 'dashboard'
-              ? 'bg-gray-700 text-white'
+              ? 'bg-gray-800 text-white'
               : 'text-gray-300 hover:text-white'
           }`}
         >
@@ -53,7 +51,7 @@ export default function Sidebar({
             onClick={() => setActivePage('audit')}
             className={`flex items-center justify-between px-4 py-2 rounded-sm transition w-full ${
               activePage === 'audit'
-                ? 'bg-gray-700 text-white'
+                ? 'bg-gray-800 text-white'
                 : 'text-gray-300 hover:text-white'
             }`}
           >
@@ -87,7 +85,7 @@ export default function Sidebar({
           onClick={() => setActivePage('supplier')}
           className={`flex items-center gap-2 px-4 py-2 rounded-sm transition ${
             activePage === 'supplier'
-              ? 'bg-gray-700 text-white'
+              ? 'bg-gray-800 text-white'
               : 'text-gray-300 hover:text-white'
           }`}
         >
@@ -104,15 +102,6 @@ export default function Sidebar({
           <span>Internal Audits</span>
         </button>
       </nav>
-
-      {/* Sign Out */}
-      <button
-        onClick={() => signOut()}
-        className='flex items-center gap-2 text-gray-300 hover:text-white transition mt-auto mb-6'
-      >
-        <ExitIcon className='w-6 h-6 text-inherit' />
-        <span className='text-md'>Sign Out</span>
-      </button>
     </aside>
   );
 }

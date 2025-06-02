@@ -111,7 +111,7 @@ export default function QACards({
         <div className='flex gap-2'>
           <button
             onClick={onAskNew}
-            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
             title='Ask New Question'
           >
             <PlusIcon className='text-white w-5 h-5' />
@@ -119,7 +119,7 @@ export default function QACards({
           <div className='relative'>
             <button
               onClick={onViewUploaded}
-              className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
+              className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed'
               disabled={!hasUploadedQuestions}
               title='View Uploaded Questions'
             >
@@ -128,7 +128,7 @@ export default function QACards({
           </div>
           <button
             onClick={onUploadNew}
-            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
             title='Upload New Questions'
           >
             <UploadIcon className='text-white w-5 h-5' />
@@ -146,7 +146,7 @@ export default function QACards({
           />
           <button
             onClick={onViewReport}
-            className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed'
+            className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed'
             disabled={notFoundCount <= 0}
           >
             Nonconformity Report
@@ -179,7 +179,7 @@ export default function QACards({
           )}
           <button
             onClick={onDownload}
-            className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+            className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
             disabled={qaList.length === 0}
             title='Download PDF'
           >
@@ -203,7 +203,7 @@ export default function QACards({
           <div
             key={index}
             id={`qa-${index + 1}`}
-            className={`p-6 bg-white rounded-md border ${
+            className={`p-6 bg-white shadow-md rounded-md border ${
               isNotFound ? 'border-red-500' : 'border-gray-300'
             } relative`}
           >
@@ -243,7 +243,7 @@ export default function QACards({
                     setConfirmDeleteIndex(null);
                     if (!openIndexes.includes(index)) toggleAccordion(index);
                   }}
-                  className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+                  className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
                 >
                   <Pencil1Icon className='w-4 h-4 text-white' />
                 </button>
@@ -255,7 +255,7 @@ export default function QACards({
                       );
                       setEditIndex(null);
                     }}
-                    className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+                    className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
                   >
                     <TrashIcon className='w-4 h-4 text-white' />
                   </button>
@@ -272,7 +272,7 @@ export default function QACards({
                           Cancel
                         </button>
                         <button
-                          className='px-2 py-1 text-sm bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+                          className='px-2 py-1 text-sm bg-gray-800 text-white rounded-sm hover:bg-gray-600'
                           onClick={() => {
                             onDelete(index);
                             setConfirmDeleteIndex(null);
@@ -319,7 +319,7 @@ export default function QACards({
                           onEdit(index, editText);
                           setEditIndex(null);
                         }}
-                        className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 text-sm'
+                        className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-600 text-sm'
                       >
                         Confirm Changes
                       </button>
@@ -340,7 +340,7 @@ export default function QACards({
 
       {/* Sticky Submit Footer */}
       <div className='sticky bottom-0 left-0 w-full flex justify-end'>
-        <button className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 transition'>
+        <button className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-600 transition'>
           Submit
         </button>
       </div>

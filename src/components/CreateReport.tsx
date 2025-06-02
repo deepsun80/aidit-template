@@ -35,7 +35,7 @@ export default function CreateReport({ setReport }: { setReport: any }) {
       <h2 className='text-2xl font-semibold mb-6 text-gray-900'>
         Create Audit
       </h2>
-      <div className='bg-white p-6 rounded-md border border-gray-300'>
+      <div className='bg-white shadow-md p-6 rounded-md border border-gray-300'>
         {/* Requesting Entity */}
         <label className='block mb-2 text-sm font-medium text-gray-700'>
           Requesting Entity:
@@ -64,7 +64,7 @@ export default function CreateReport({ setReport }: { setReport: any }) {
             onClick={handleSubmit}
             className={`px-4 py-2 rounded-sm transition ${
               customer.trim() && date
-                ? 'bg-gray-800 text-white hover:bg-gray-700'
+                ? 'bg-gray-800 text-white hover:bg-gray-600'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >

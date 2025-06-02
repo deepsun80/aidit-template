@@ -156,7 +156,7 @@ export default function RunAssessment({
                       Cancel
                     </button>
                     <button
-                      className='px-2 py-1 text-sm bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+                      className='px-2 py-1 text-sm bg-gray-800 text-white rounded-sm hover:bg-gray-600'
                       onClick={handleEditSubmit}
                     >
                       Submit
@@ -169,13 +169,13 @@ export default function RunAssessment({
                         setEditIndex(index);
                         setEditText(q.question);
                       }}
-                      className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+                      className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
                     >
                       <Pencil1Icon className='w-4 h-4 text-white' />
                     </button>
                     <button
                       onClick={() => handleDelete(index)}
-                      className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700'
+                      className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-600'
                     >
                       <TrashIcon className='w-4 h-4 text-white' />
                     </button>
@@ -195,7 +195,7 @@ export default function RunAssessment({
             Cancel
           </button>
           <button
-            className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+            className='px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-600'
             disabled={questions.length === 0}
           >
             Run Assessment

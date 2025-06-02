@@ -69,7 +69,7 @@ export default function SupplierAssessmentView({
         </div>
         <button
           onClick={onBack}
-          className='w-9 h-9 rounded-full bg-gray-800 hover:bg-gray-700 text-white flex items-center justify-center'
+          className='w-9 h-9 rounded-full bg-gray-800 hover:bg-gray-600 text-white flex items-center justify-center'
           title='Back'
         >
           <CaretLeftIcon className='w-5 h-5' />
@@ -109,7 +109,7 @@ export default function SupplierAssessmentView({
       <div className='w-full flex justify-end'>
         <button
           onClick={onRunAssessment}
-          className='text-sm px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700 mt-4'
+          className='text-sm px-4 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-600 mt-4'
         >
           New Assessment
         </button>

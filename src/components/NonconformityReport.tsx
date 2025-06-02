@@ -97,7 +97,7 @@ export default function NonconformityReport({
         />
         <button
           onClick={onBack}
-          className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-700'
+          className='text-sm px-3 py-2 bg-gray-800 text-white rounded-sm hover:bg-gray-600'
         >
           View Audit
         </button>
@@ -109,7 +109,7 @@ export default function NonconformityReport({
       </p>
 
       {/* Breakdown List */}
-      <div className='bg-white border border-gray-300 rounded-md p-6'>
+      <div className='bg-white border border-gray-300 rounded-md shadow-md p-6'>
         {Object.keys(referenceMap).length === 0 ? (
           <p className='text-gray-600'>
             No Standard Reference Nonconformities Found.

@@ -33,7 +33,7 @@ export default function WelcomeScreen({
       </div>
 
       {/* Body Section - Welcome Text & Buttons */}
-      <div className='bg-white text-center rounded-md border border-gray-300 p-6 mt-4'>
+      <div className='bg-white text-center rounded-md border shadow-md border-gray-300 p-6 mt-4'>
         <p className='text-lg mb-2'>
           There are no <span className='font-bold'>stored responses</span> in
           this audit.
@@ -47,13 +47,13 @@ export default function WelcomeScreen({
         <div className='flex justify-center gap-4 mt-8'>
           <button
             onClick={onOpenChat}
-            className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
+            className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-600 transition'
           >
             Ask a Question
           </button>
           <button
             onClick={onUploadClick}
-            className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-700 transition'
+            className='bg-gray-800 text-white px-6 py-2 rounded-sm hover:bg-gray-600 transition'
           >
             Upload Questionnaire
           </button>

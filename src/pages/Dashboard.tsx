@@ -278,7 +278,7 @@ export default function Dashboard() {
                             barColor={barColor}
                           />
                         ) : (
-                          <button className='bg-gray-800 text-white text-sm px-4 py-2 rounded-sm hover:bg-gray-700 transition'>
+                          <button className='bg-gray-800 text-white text-sm px-4 py-2 rounded-sm hover:bg-gray-600 transition'>
                             Start Audit
                           </button>
                         )}
