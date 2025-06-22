@@ -12,7 +12,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'Ai.Dit',
+  title: 'Ai.DIT',
   description: 'A.I Audit Assistant',
 };
 
