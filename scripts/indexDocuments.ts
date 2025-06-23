@@ -26,6 +26,7 @@ dotenv.config({ path: '.env.local' }); // Load environment variables
 Settings.embedModel = new OpenAIEmbedding();
 
 const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME!;
+const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || 'default';
 
 async function indexDocuments() {
   try {
@@ -37,11 +38,14 @@ async function indexDocuments() {
       return;
     }
 
-    console.log(`Indexing ${documents.length} documents into Pinecone...`);
+    console.log(
+      `Indexing ${documents.length} documents into Pinecone namespace: ${process.env.PINECONE_NAMESPACE}...`
+    );
 
     // Initialize Pinecone Vector Store
     const pineconeVectorStore = new PineconeVectorStore({
       indexName: PINECONE_INDEX_NAME,
+      namespace: PINECONE_NAMESPACE,
     });
 
     // Use Pinecone as the storage context

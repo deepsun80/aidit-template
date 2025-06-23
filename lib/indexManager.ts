@@ -8,6 +8,7 @@ Settings.embedModel = new OpenAIEmbedding();
 
 const PINECONE_API_KEY = process.env.PINECONE_API_KEY!;
 const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME!;
+const PINECONE_NAMESPACE = process.env.PINECONE_NAMESPACE || 'default';
 
 // Initialize Pinecone client
 const pinecone = new Pinecone({ apiKey: PINECONE_API_KEY });
@@ -20,6 +21,7 @@ export async function getIndex() {
     // Connect to Pinecone Vector Store
     const pineconeVectorStore = new PineconeVectorStore({
       indexName: PINECONE_INDEX_NAME,
+      namespace: PINECONE_NAMESPACE,
     });
 
     // Check if Pinecone already has vectors
@@ -33,7 +35,9 @@ export async function getIndex() {
       };
     }
 
-    console.log('Loading existing index from Pinecone...');
+    console.log(
+      `Loading existing index from Pinecone namespace: ${process.env.PINECONE_NAMESPACE}...`
+    );
     return {
       index: await VectorStoreIndex.fromVectorStore(pineconeVectorStore),
     };
