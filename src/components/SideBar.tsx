@@ -22,12 +22,7 @@ export default function Sidebar({
     <aside className='w-70 bg-gray-600 text-white flex flex-col items-center pt-6 min-h-full gap-20'>
       {/* Logo */}
       <div className='flex items-center'>
-        <Image
-          src='/AiDIT-logo.jpg'
-          alt='Ai.DIT Logo'
-          width={180}
-          height={80}
-        />
+        <Image src='/AiDIT-logo.jpg' alt='AiDIT Logo' width={180} height={80} />
       </div>
 
       {/* Nav Items */}
